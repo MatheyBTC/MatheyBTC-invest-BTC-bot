@@ -1,0 +1,38 @@
+name: MatheyBTC Invest Bot — T3-CCI Signal
+
+on:
+  schedule:
+    - cron: "30 0 * * *"   # 00:30 UTC = cierre vela diaria BTC
+  workflow_dispatch:
+
+jobs:
+  run-signal:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4.2.2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5.4.0
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependencias
+        run: pip install requests
+
+      - name: Ejecutar señal T3-CCI
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python t3cci_signal.py
+
+      - name: Guardar estado
+        run: |
+          git config user.name "invest-bot"
+          git config user.email "bot@invest"
+          git add signal_state.json
+          git diff --staged --quiet || git commit -m "chore: update signal state"
+          git push
