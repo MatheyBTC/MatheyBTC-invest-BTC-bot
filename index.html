@@ -622,26 +622,6 @@ a { color: var(--orange); }
     </div>
   </div>
 
-  <!-- Telegram webhook info -->
-  <div class="card mt-16">
-    <h3>📲 Configurar Señales Futuras → Telegram</h3>
-    <div class="info-box mb-16">
-      TradingView puede enviar las señales directamente a tu Telegram sin ningún servidor. Seguí estos pasos:
-    </div>
-    <div style="font-size:13px;line-height:2">
-      <b>1.</b> En TradingView, en el indicador T3-CCI → agregá este código al final del script para habilitar alertas:<br>
-      <code style="background:var(--bg3);padding:8px;display:block;border-radius:6px;margin:8px 0;font-size:12px">
-buySignal = crossover(xccir, 0)<br>
-sellSignal = crossunder(xccir, 0)<br>
-alertcondition(buySignal, title="T3-CCI COMPRA", message='&#123;"chat_id":"TU_CHAT_ID","text":"🟢 COMPRA BTC\\nPrecio: &#123;&#123;close&#125;&#125;\\nHora: &#123;&#123;timenow&#125;&#125;","parse_mode":"HTML"&#125;')<br>
-alertcondition(sellSignal, title="T3-CCI VENTA", message='&#123;"chat_id":"TU_CHAT_ID","text":"🔴 VENTA BTC\\nPrecio: &#123;&#123;close&#125;&#125;\\nHora: &#123;&#123;timenow&#125;&#125;","parse_mode":"HTML"&#125;')
-      </code>
-      <b>2.</b> Creá la alerta en TradingView → Alerts → Create Alert → elegí la condición → activá <b>Webhook URL</b><br>
-      <b>3.</b> En el campo Webhook URL pegá:<br>
-      <code style="background:var(--bg3);padding:8px;display:block;border-radius:6px;margin:8px 0;font-size:12px" id="d-webhook-url">https://api.telegram.org/bot<b>TU_BOT_TOKEN</b>/sendMessage</code>
-      <b>4.</b> ¡Listo! Cada señal llega directo a tu Telegram sin servidores.
-    </div>
-  </div>
 
   <div id="d-results">
     <div class="grid-4 mb-16">
