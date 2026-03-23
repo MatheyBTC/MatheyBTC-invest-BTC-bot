@@ -103,9 +103,9 @@ a { color: var(--orange); }
 .sema-c1 { background: #0a2a0a; border-color: #4ade80; }
 .sema-c2 { background: #2a2a0a; border-color: var(--yellow); }
 .sema-c3 { background: #2a1a0a; border-color: #ff8c00; }
-.sema-c4 { background: #2a0a0a; border-color: var(--red); }
-.sema-c5 { background: #0a0a2a; border-color: #4a9eff; }
-.sema-below { background: #1a0a0a; border-color: #444; }
+.sema-c4 { background: #3d0000; border-color: #ff2222; }
+.sema-c5 { background: #1a0a2a; border-color: #a855f7; }
+.sema-below { background: #0a1020; border-color: #4a9eff; }
 .sema-ref  { background: #0d1117; border-color: #4a9eff; }
 
 /* CHART */
@@ -260,7 +260,7 @@ a { color: var(--orange); }
       <h3>🚦 Semáforo — Precio Actual vs Promedio de Compra por Ventanas de Tiempo</h3>
       <div id="a-semaphore" class="semaphore-grid mt-16"></div>
       <div class="mt-16 text-muted" style="font-size:12px;line-height:1.8">
-        🟩 -30% &nbsp;🟨 -25% &nbsp;🟧 -20% &nbsp;🟥 -15% &nbsp;🟦 -10% &nbsp;promedio por debajo del Precio Actual
+        🟩 -30% &nbsp;🟨 -25% &nbsp;🟧 -20% &nbsp;🟥 -15% &nbsp;🟪 -10% &nbsp;🟦 Mayor a 0
       </div>
     </div>
 
@@ -1182,12 +1182,12 @@ function renderSemaphore(startDate, endDate, amount, freqDays) {
   refDiv.className = 'sema-cell sema-ref';
   refDiv.innerHTML = `
     <div class="period">Precio Actual</div>
-    <div class="avg">Referencia</div>
+    <div class="avg">Valor = <b>U$S ${fmt(currentPrice, 0)}</b></div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
-      <div class="diff">U$S ${fmt(currentPrice, 0)}</div>
+      <div class="diff" id="sema-ref-diff">—</div>
       <div style="font-size:26px;line-height:1;font-weight:bold">₿</div>
     </div>
-    <div style="font-size:11px;margin-top:4px;opacity:0.8">precio de hoy</div>`;
+    <div style="font-size:11px;margin-top:4px;opacity:0.8" id="sema-ref-label">vs Precio Medio Plan</div>`;
   container.appendChild(refDiv);
 
   const periods = [
@@ -1202,6 +1202,26 @@ function renderSemaphore(startDate, endDate, amount, freqDays) {
     { label: '5 Ciclos (x60)',  days: 1825 },
   ];
 
+  // Plan-level avgP for "Precio Actual" reference cell
+  const planAll = calcDCA(startDate, endDate, amount, freqDays);
+  if (planAll.length) {
+    const { totalInvested: piTotal, totalBTC: piBTC } = aggregateDCA(planAll);
+    const planAvgP = piTotal / piBTC;
+    const planDiff = ((planAvgP - currentPrice) / planAvgP) * 100;
+    let planCls = 'sema-below';
+    if (planDiff <= -30) planCls = 'sema-c1';
+    else if (planDiff <= -25) planCls = 'sema-c2';
+    else if (planDiff <= -20) planCls = 'sema-c3';
+    else if (planDiff <= -15) planCls = 'sema-c4';
+    else if (planDiff <= -10) planCls = 'sema-c5';
+    refDiv.classList.remove('sema-ref');
+    refDiv.classList.add(planCls);
+    const refDiffEl = document.getElementById('sema-ref-diff');
+    const refLabelEl = document.getElementById('sema-ref-label');
+    if (refDiffEl) refDiffEl.textContent = fmtPct(planDiff);
+    if (refLabelEl) refLabelEl.textContent = planDiff <= 0 ? 'por debajo del precio actual' : 'por arriba del precio actual';
+  }
+
   for (const period of periods) {
     const pEnd = endDate;
     const pStart = addDays(pEnd, -period.days);
@@ -1211,7 +1231,7 @@ function renderSemaphore(startDate, endDate, amount, freqDays) {
     const { totalInvested, totalBTC } = aggregateDCA(p);
     const avgP = totalInvested / totalBTC;
     // diff < 0 = promedio de compra está por debajo del precio actual = buena posición
-    const diff = ((avgP - currentPrice) / currentPrice) * 100;
+    const diff = ((avgP - currentPrice) / avgP) * 100;
 
     let cls = 'sema-below';
     if (diff <= -30) cls = 'sema-c1';
