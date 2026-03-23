@@ -77,7 +77,7 @@ a { color: var(--orange); }
 
 /* STAT BOX */
 .stat-box { background: var(--bg3); border-radius: 8px; padding: 16px; text-align: center; }
-.stat-box .label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.stat-box .label { font-size: 11px; color: var(--text2); margin-bottom: 6px; }
 .stat-box .value { font-size: 22px; font-weight: bold; color: var(--orange); }
 .stat-box .sub { font-size: 11px; color: var(--text2); margin-top: 4px; }
 .stat-box.green .value { color: var(--green); }
@@ -86,7 +86,7 @@ a { color: var(--orange); }
 
 /* TABLES */
 .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
-.tbl th { background: var(--bg3); color: var(--text2); padding: 10px 12px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
+.tbl th { background: var(--bg3); color: var(--text2); padding: 10px 12px; text-align: left; font-size: 11px; border-bottom: 1px solid var(--border); }
 .tbl td { padding: 9px 12px; border-bottom: 1px solid #1f1f1f; }
 .tbl tr:hover td { background: var(--bg3); }
 .tbl .num { text-align: right; font-family: monospace; }
@@ -218,12 +218,12 @@ a { color: var(--orange); }
       <div class="stat-box">
         <div class="label">Precio Promedio Compra</div>
         <div class="value" id="a-avgprice">—</div>
-        <div class="sub">USD / BTC</div>
+        <div class="sub">U$S/BTC</div>
       </div>
       <div class="stat-box">
         <div class="label">Total Invertido</div>
         <div class="value" id="a-invested">—</div>
-        <div class="sub">USD</div>
+        <div class="sub">U$S</div>
       </div>
       <div class="stat-box green">
         <div class="label">Valor Actual</div>
@@ -272,9 +272,9 @@ a { color: var(--orange); }
       <h3>🕐 Backtesting — Última Década (mismo monto y frecuencia, al día de hoy)</h3>
       <table class="tbl" id="a-backtest-table">
         <thead><tr>
-          <th>Inicio</th><th class="num">Años</th><th class="num">Compras</th>
-          <th class="num">BTC Acumulado</th><th class="num">Precio Promedio</th>
-          <th class="num">Total Invertido</th><th class="num">Valor Actual</th><th class="num">ROI</th>
+          <th>Inicio</th><th class="num">Ciclos</th><th class="num">Compras</th>
+          <th class="num">BTC Acumulado</th><th class="num">Precio Medio</th>
+          <th class="num">Total Invertido</th><th class="num">Valor Actual (Cartera)</th><th class="num">ROI</th>
         </tr></thead>
         <tbody id="a-backtest-body"></tbody>
       </table>
@@ -335,7 +335,7 @@ a { color: var(--orange); }
       <div class="stat-box">
         <div class="label">Precio Promedio</div>
         <div class="value" id="b-avgprice">—</div>
-        <div class="sub">USD / BTC</div>
+        <div class="sub">U$S/BTC</div>
       </div>
       <div class="stat-box">
         <div class="label">Total Invertido</div>
@@ -1107,10 +1107,10 @@ function renderChartA(equity) {
     data: {
       labels,
       datasets: [
-        { label: 'Valor Portfolio (USD)', data: equity.map(e => e.value),
+        { label: 'Valor Portfolio (U$S)', data: equity.map(e => e.value),
           borderColor: '#f7931a', backgroundColor: 'rgba(247,147,26,0.1)', fill: true, pointRadius: 0, tension: 0.3 },
-        { label: 'Total Invertido (USD)', data: equity.map(e => e.invested),
-          borderColor: '#4a9eff', backgroundColor: 'transparent', borderDash: [4,4], pointRadius: 0, tension: 0.3 }
+        { label: 'Total Invertido (U$S)', data: equity.map(e => e.invested),
+          borderColor: '#4a9eff', backgroundColor: 'transparent', pointRadius: 0, tension: 0.3 }
       ]
     },
     options: chartOpts('USD')
@@ -1120,21 +1120,30 @@ function renderChartA(equity) {
 function renderFreqComparison(startDate, endDate, amount) {
   const tbody = document.getElementById('a-freq-body');
   tbody.innerHTML = '';
-  const freqs = [1, 7, 14, 30];
-  for (const f of freqs) {
-    const p = calcDCA(startDate, endDate, amount, f);
+  // Base capital = what daily DCA would invest over the period
+  const dailyPurchases = calcDCA(startDate, endDate, amount, 1);
+  const totalCapital = amount * dailyPurchases.length;
+  const freqs = [
+    { days: 1,  color: 'rgba(0,200,122,0.08)',  border: '1px solid rgba(0,200,122,0.3)' },
+    { days: 7,  color: 'rgba(255,215,0,0.08)',   border: '1px solid rgba(255,215,0,0.3)' },
+    { days: 14, color: 'rgba(247,147,26,0.08)',  border: '1px solid rgba(247,147,26,0.3)' },
+    { days: 30, color: 'rgba(255,68,68,0.08)',   border: '1px solid rgba(255,68,68,0.3)' },
+  ];
+  for (const { days, color, border } of freqs) {
+    const p = calcDCA(startDate, endDate, totalCapital / Math.max(1, calcDCA(startDate, endDate, 1, days).length), days);
     if (!p.length) continue;
     const { totalBTC, totalInvested, avgPrice } = aggregateDCA(p);
     const val = totalBTC * currentPrice;
     const roi = ((val - totalInvested) / totalInvested) * 100;
     const tr = document.createElement('tr');
+    tr.style.cssText = `background:${color};border-left:${border}`;
     tr.innerHTML = `
-      <td>${freqLabel(f)}</td>
+      <td>${freqLabel(days)}</td>
       <td class="num">${p.length}</td>
       <td class="num">${fmtBTC(totalBTC)}</td>
-      <td class="num">$${fmt(avgPrice, 0)}</td>
-      <td class="num">$${fmt(totalInvested, 0)}</td>
-      <td class="num">$${fmt(val, 0)}</td>
+      <td class="num">U$S ${fmt(avgPrice, 0)}</td>
+      <td class="num">U$S ${fmt(totalInvested, 0)}</td>
+      <td class="num">U$S ${fmt(val, 0)}</td>
       <td class="num ${roi >= 0 ? 'pos' : 'neg'}">${fmtPct(roi)}</td>`;
     tbody.appendChild(tr);
   }
@@ -1144,14 +1153,12 @@ function renderSemaphore(startDate, endDate, amount, freqDays) {
   const container = document.getElementById('a-semaphore');
   container.innerHTML = '';
   const periods = [
-    { label: '90 días', days: 90 },
-    { label: '180 días', days: 180 },
-    { label: '12 meses', days: 365 },
-    { label: '24 meses', days: 730 },
-    { label: '36 meses', days: 1095 },
-    { label: '48 meses', days: 1460 },
-    { label: '60 meses', days: 1825 },
-    { label: '72 meses', days: 2190 },
+    { label: 'APY 60',   days: 60 },
+    { label: 'APY 90',   days: 90 },
+    { label: 'APY 180',  days: 180 },
+    { label: '12 Meses', days: 365 },
+    { label: '18 Meses', days: 547 },
+    { label: '24 Meses', days: 730 },
   ];
 
   for (const period of periods) {
@@ -1175,9 +1182,12 @@ function renderSemaphore(startDate, endDate, amount, freqDays) {
     div.className = 'sema-cell ' + cls;
     div.innerHTML = `
       <div class="period">${period.label}</div>
-      <div class="avg">Promedio compra: <b>$${fmt(avgP, 0)}</b></div>
-      <div class="diff">${fmtPct(diff)}</div>
-      <div style="font-size:11px;margin-top:4px;opacity:0.8">${diff >= 0 ? '↑ por arriba' : '↓ por abajo'} del promedio</div>`;
+      <div class="avg">Promedio compra: <b>U$S ${fmt(avgP, 0)}</b></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+        <div class="diff">${fmtPct(diff)}</div>
+        <div style="font-size:13px;font-weight:bold">${diff >= 0 ? '↑' : '↓'}</div>
+      </div>
+      <div style="font-size:11px;margin-top:4px;opacity:0.8">${diff >= 0 ? 'por arriba del promedio' : 'por abajo del promedio'}</div>`;
     container.appendChild(div);
   }
 }
@@ -1203,10 +1213,10 @@ function renderMA90(purchases, equity) {
 
   const statsDiv = document.getElementById('a-ma-stats');
   statsDiv.innerHTML = `
-    <div class="stat-box"><div class="label">Puntos analizados</div><div class="value" style="font-size:18px">${prices90.length}</div></div>
-    <div class="stat-box red"><div class="label">Veces por debajo del promedio</div><div class="value" style="font-size:18px">${belowCount}</div><div class="sub">${fmtPct(pctBelow)} del tiempo</div></div>
-    <div class="stat-box green"><div class="label">Veces por arriba</div><div class="value" style="font-size:18px">${aboveCount}</div><div class="sub">${fmtPct(100 - pctBelow)} del tiempo</div></div>
-    <div class="stat-box"><div class="label">Precio promedio MA90 actual</div><div class="value" style="font-size:18px">$${prices90.length ? fmt(prices90[prices90.length-1].ma90, 0) : '—'}</div></div>`;
+    <div class="stat-box"><div class="label">Puntos Calculados</div><div class="value" style="font-size:18px">${prices90.length}</div></div>
+    <div class="stat-box red"><div class="label">Veces por Debajo de la Media</div><div class="value" style="font-size:18px">${belowCount}</div><div class="sub">${fmtPct(pctBelow)} del tiempo</div></div>
+    <div class="stat-box green"><div class="label">Veces por Arriba de la Media</div><div class="value" style="font-size:18px">${aboveCount}</div><div class="sub">${fmtPct(100 - pctBelow)} del tiempo</div></div>
+    <div class="stat-box"><div class="label">Precio Medio Actual MA90</div><div class="value" style="font-size:18px">U$S ${prices90.length ? fmt(prices90[prices90.length-1].ma90, 0) : '—'}</div></div>`;
 
   const ctx = document.getElementById('chartA_MA').getContext('2d');
   if (chartA_MA) chartA_MA.destroy();
@@ -1220,11 +1230,17 @@ function renderMA90(purchases, equity) {
         { label: 'Precio BTC', data: filtered.map(p => p.price),
           borderColor: '#f7931a', pointRadius: 0, tension: 0.3, fill: false },
         { label: 'MA90 Promedio Compra', data: filtered.map(p => p.ma90),
-          borderColor: '#4a9eff', borderDash: [4,4], pointRadius: 0, tension: 0.3, fill: false }
+          borderColor: '#4a9eff', pointRadius: 0, tension: 0.3, fill: false }
       ]
     },
     options: chartOpts('USD')
   });
+}
+
+function fmtDateYYYYMMM(dateStr) {
+  const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const d = strToDate(dateStr);
+  return d.getUTCFullYear() + '-' + months[d.getUTCMonth()];
 }
 
 function renderBacktest(amount, freqDays, endDate) {
@@ -1238,16 +1254,16 @@ function renderBacktest(amount, freqDays, endDate) {
     const { totalBTC, totalInvested, avgPrice } = aggregateDCA(p);
     const val = totalBTC * currentPrice;
     const roi = ((val - totalInvested) / totalInvested) * 100;
-    const yrs = daysBetween(startDate, endDate) / 365;
+    const yrs = Math.round(daysBetween(startDate, endDate) / 365);
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td>${startDate}</td>
-      <td class="num">${yrs.toFixed(1)}</td>
+      <td>${fmtDateYYYYMMM(startDate)}</td>
+      <td class="num">${yrs}</td>
       <td class="num">${p.length}</td>
       <td class="num">${fmtBTC(totalBTC)}</td>
-      <td class="num">$${fmt(avgPrice, 0)}</td>
-      <td class="num">$${fmt(totalInvested, 0)}</td>
-      <td class="num">$${fmt(val, 0)}</td>
+      <td class="num">U$S ${fmt(avgPrice, 0)}</td>
+      <td class="num">U$S ${fmt(totalInvested, 0)}</td>
+      <td class="num">U$S ${fmt(val, 0)}</td>
       <td class="num ${roi >= 0 ? 'pos' : 'neg'}">${fmtPct(roi)}</td>`;
     tbody.appendChild(tr);
   }
@@ -1823,14 +1839,27 @@ function runDashboard() {
 // ============================================================
 //  CHART OPTIONS
 // ============================================================
+const MESES_CORTOS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
 function chartOpts(yLabel) {
   return {
     responsive: true, maintainAspectRatio: false,
     interaction: { mode: 'index', intersect: false },
     plugins: { legend: { labels: { color: '#aaa' } } },
     scales: {
-      x: { ticks: { color: '#aaa', maxTicksLimit: 12 }, grid: { color: '#222' } },
-      y: { ticks: { color: '#aaa', callback: v => '$' + fmt(v, 0) }, grid: { color: '#222' } }
+      x: {
+        ticks: {
+          color: '#aaa', maxTicksLimit: 12,
+          callback: function(val) {
+            const label = this.getLabelForValue(val);
+            if (!label) return '';
+            const d = strToDate(label);
+            return [String(d.getUTCFullYear()), MESES_CORTOS[d.getUTCMonth()] + '/' + String(d.getUTCDate()).padStart(2,'0')];
+          }
+        },
+        grid: { color: '#222' }
+      },
+      y: { ticks: { color: '#aaa', callback: v => 'U$S ' + fmt(v, 0) }, grid: { color: '#222' } }
     }
   };
 }
