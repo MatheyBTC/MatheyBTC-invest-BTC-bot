@@ -96,7 +96,7 @@ a { color: var(--orange); }
 /* SEMAPHORE */
 .semaphore-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
 .sema-cell { border-radius: 8px; padding: 14px; border: 1px solid transparent; }
-.sema-cell .period { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.sema-cell .period { font-size: 11px; letter-spacing: 0.5px; margin-bottom: 6px; }
 .sema-cell .avg { font-size: 13px; margin-bottom: 4px; }
 .sema-cell .diff { font-size: 18px; font-weight: bold; }
 .sema-c1 { background: #0a2a0a; border-color: #00c87a; }
@@ -253,10 +253,11 @@ a { color: var(--orange); }
 
     <!-- Semáforo -->
     <div class="card">
-      <h3>🚦 Semáforo — Precio actual vs Promedio de Compra por Período</h3>
+      <h3>🚦 Semáforo — Precio Actual vs Promedio de Compra por Ventanas de Tiempo</h3>
       <div id="a-semaphore" class="semaphore-grid mt-16"></div>
-      <div class="mt-16 text-muted" style="font-size:12px;">
-        🟢 30 Meses · 🟡 25 Meses · 🟠 20 Meses · 🔴 15 Meses · ⬛ 10 Meses · por debajo = zona de compra
+      <div class="mt-16 text-muted" style="font-size:12px;line-height:1.8">
+        🟢 30 Meses · 🟡 25 Meses · 🟠 20 Meses · 🔴 15 Meses · ⬛ 10 Meses · por debajo = zona de compra<br>
+        🟩 30% &nbsp;🟨 25% &nbsp;🟧 20% &nbsp;🟥 15% &nbsp;🟦 10% &nbsp;por debajo Precio Actual
       </div>
     </div>
 
@@ -1169,12 +1170,14 @@ function renderSemaphore(startDate, endDate, amount, freqDays) {
   const container = document.getElementById('a-semaphore');
   container.innerHTML = '';
   const periods = [
-    { label: 'APY 60',   days: 60 },
-    { label: 'APY 90',   days: 90 },
-    { label: 'APY 180',  days: 180 },
-    { label: '12 Meses', days: 365 },
-    { label: '18 Meses', days: 547 },
-    { label: '24 Meses', days: 730 },
+    { label: 'APY 60',          days: 60   },
+    { label: 'APY 90',          days: 90   },
+    { label: 'APY 180',         days: 180  },
+    { label: '12 Meses',        days: 365  },
+    { label: '2 Ciclos (x24)',  days: 730  },
+    { label: '3 Ciclos (x36)',  days: 1095 },
+    { label: '4 Ciclos (x48)',  days: 1460 },
+    { label: '5 Ciclos (x60)',  days: 1825 },
   ];
 
   for (const period of periods) {
@@ -1198,10 +1201,10 @@ function renderSemaphore(startDate, endDate, amount, freqDays) {
     div.className = 'sema-cell ' + cls;
     div.innerHTML = `
       <div class="period">${period.label}</div>
-      <div class="avg">Promedio compra: <b>U$S ${fmt(avgP, 0)}</b></div>
+      <div class="avg">Valor = <b>U$S ${fmt(avgP, 0)}</b></div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
         <div class="diff">${fmtPct(diff)}</div>
-        <div style="font-size:13px;font-weight:bold">${diff >= 0 ? '↑' : '↓'}</div>
+        <div style="font-size:26px;line-height:1;font-weight:bold">${diff >= 0 ? '↑' : '↓'}</div>
       </div>
       <div style="font-size:11px;margin-top:4px;opacity:0.8">${diff >= 0 ? 'por arriba del promedio' : 'por abajo del promedio'}</div>`;
     container.appendChild(div);
