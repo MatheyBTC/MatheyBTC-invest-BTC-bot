@@ -1243,8 +1243,8 @@ function renderSemaphore(startDate, endDate, amount, freqDays) {
     if (!p.length) continue;
     const { totalInvested, totalBTC } = aggregateDCA(p);
     const avgP = totalInvested / totalBTC;
-    // diff = (precioActual / promedioVentana - 1): positivo = compré barato, precio subió
-    const diff = (currentPrice / avgP - 1) * 100;
+    // diff = (promedioVentana / planAvgP - 1): positivo = ese período compró caro vs mi promedio
+    const diff = (avgP / planAvgP - 1) * 100;
 
     const div = document.createElement('div');
     div.className = 'sema-cell ' + semaCls(diff);
