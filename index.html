@@ -312,10 +312,10 @@ a { color: var(--orange); }
       <div class="form-group">
         <label data-i18n="a-freq-label">Frecuencia</label>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">
-          <button onclick="setFreq('a-freq',1,this)" style="background:#4ade80;color:#000;padding:4px 12px;border:2px solid transparent;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Diario</button>
-          <button onclick="setFreq('a-freq',7,this)" style="background:#facc15;color:#000;padding:4px 12px;border:2px solid #fff;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Semanal</button>
-          <button onclick="setFreq('a-freq',14,this)" style="background:#f97316;color:#fff;padding:4px 12px;border:2px solid transparent;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Bisemanal</button>
-          <button onclick="setFreq('a-freq',30,this)" style="background:#ef4444;color:#fff;padding:4px 12px;border:2px solid transparent;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Mensual</button>
+          <button onclick="setFreq('a-freq',1,this)" data-i18n="freq-btn-diario" style="background:transparent;border:2px solid #4ade80;color:#4ade80;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Diario</button>
+          <button onclick="setFreq('a-freq',7,this)" data-i18n="freq-btn-semanal" style="background:transparent;border:2px solid #facc15;color:#facc15;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;outline:2px solid #fff;outline-offset:2px;">Semanal</button>
+          <button onclick="setFreq('a-freq',14,this)" data-i18n="freq-btn-bisemanal" style="background:transparent;border:2px solid #f97316;color:#f97316;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Bisemanal</button>
+          <button onclick="setFreq('a-freq',30,this)" data-i18n="freq-btn-mensual" style="background:transparent;border:2px solid #ef4444;color:#ef4444;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Mensual</button>
         </div>
         <input type="hidden" id="a-freq" value="7">
       </div>
@@ -425,10 +425,10 @@ a { color: var(--orange); }
       <div class="form-group">
         <label data-i18n="a-freq-label">Frecuencia</label>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">
-          <button onclick="setFreq('b-freq',1,this)" style="background:#4ade80;color:#000;padding:4px 12px;border:2px solid transparent;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Diario</button>
-          <button onclick="setFreq('b-freq',7,this)" style="background:#facc15;color:#000;padding:4px 12px;border:2px solid #fff;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Semanal</button>
-          <button onclick="setFreq('b-freq',14,this)" style="background:#f97316;color:#fff;padding:4px 12px;border:2px solid transparent;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Bisemanal</button>
-          <button onclick="setFreq('b-freq',30,this)" style="background:#ef4444;color:#fff;padding:4px 12px;border:2px solid transparent;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Mensual</button>
+          <button onclick="setFreq('b-freq',1,this)" data-i18n="freq-btn-diario" style="background:transparent;border:2px solid #4ade80;color:#4ade80;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Diario</button>
+          <button onclick="setFreq('b-freq',7,this)" data-i18n="freq-btn-semanal" style="background:transparent;border:2px solid #facc15;color:#facc15;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;outline:2px solid #fff;outline-offset:2px;">Semanal</button>
+          <button onclick="setFreq('b-freq',14,this)" data-i18n="freq-btn-bisemanal" style="background:transparent;border:2px solid #f97316;color:#f97316;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Bisemanal</button>
+          <button onclick="setFreq('b-freq',30,this)" data-i18n="freq-btn-mensual" style="background:transparent;border:2px solid #ef4444;color:#ef4444;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Mensual</button>
         </div>
         <input type="hidden" id="b-freq" value="7">
       </div>
@@ -448,22 +448,24 @@ a { color: var(--orange); }
         </button>
       </div>
       <div id="b-trigger-fields">
-        <div class="form-group">
-          <label data-i18n="b-trigger-label">Trigger: Precio Sube X% Sobre MA90</label>
-          <input type="number" id="b-trigger" value="25" min="5" max="200">
-          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">
-            <button onclick="setTrigger(25)" style="background:#4ade80;color:#000;padding:4px 10px;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">25%</button>
-            <button onclick="setTrigger(15)" style="background:#facc15;color:#000;padding:4px 10px;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">15%</button>
-            <button onclick="setTrigger(5)" style="background:#ef4444;color:#fff;padding:4px 10px;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">5%</button>
+        <div class="form-row">
+          <div class="form-group">
+            <label data-i18n="b-trigger-label">Trigger: Precio Sube X% Sobre MA90</label>
+            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px;">
+              <button onclick="setTrigger(25)" style="background:transparent;border:2px solid #4ade80;color:#4ade80;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">25%</button>
+              <button onclick="setTrigger(15)" style="background:transparent;border:2px solid #facc15;color:#facc15;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">15%</button>
+              <button onclick="setTrigger(5)" style="background:transparent;border:2px solid #ef4444;color:#ef4444;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">5%</button>
+              <input type="number" id="b-trigger" value="25" min="5" max="200" style="width:65px;">
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label data-i18n="b-sellpct-label">Vender % del Stack al Trigger</label>
-          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-            <button onclick="setSellPct(5)" style="background:#4ade80;color:#000;padding:4px 10px;border:none;border-radius:4px;cursor:pointer;font-size:12px">5%</button>
-            <button onclick="setSellPct(8)" style="background:#facc15;color:#000;padding:4px 10px;border:none;border-radius:4px;cursor:pointer;font-size:12px">8%</button>
-            <button onclick="setSellPct(10)" style="background:#f85149;color:#fff;padding:4px 10px;border:none;border-radius:4px;cursor:pointer;font-size:12px">10%</button>
-            <input type="number" id="b-sellpct" value="10" min="1" max="100" style="width:65px">
+          <div class="form-group">
+            <label data-i18n="b-sellpct-label">Vender % del Stack al Trigger</label>
+            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px;">
+              <button onclick="setSellPct(5)" style="background:transparent;border:2px solid #4ade80;color:#4ade80;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">5%</button>
+              <button onclick="setSellPct(8)" style="background:transparent;border:2px solid #facc15;color:#facc15;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">8%</button>
+              <button onclick="setSellPct(10)" style="background:transparent;border:2px solid #ef4444;color:#ef4444;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">10%</button>
+              <input type="number" id="b-sellpct" value="10" min="1" max="100" style="width:65px">
+            </div>
           </div>
         </div>
       </div>
@@ -1411,10 +1413,10 @@ a { color: var(--orange); }
       <div class="form-group">
         <label data-i18n="a-freq-label">Frecuencia</label>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">
-          <button onclick="setFreq('e-freq',1,this)" style="background:#4ade80;color:#000;padding:4px 12px;border:2px solid transparent;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Diario</button>
-          <button onclick="setFreq('e-freq',7,this)" style="background:#facc15;color:#000;padding:4px 12px;border:2px solid transparent;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Semanal</button>
-          <button onclick="setFreq('e-freq',14,this)" style="background:#f97316;color:#fff;padding:4px 12px;border:2px solid transparent;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Bisemanal</button>
-          <button onclick="setFreq('e-freq',30,this)" style="background:#ef4444;color:#fff;padding:4px 12px;border:2px solid #fff;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Mensual</button>
+          <button onclick="setFreq('e-freq',1,this)" data-i18n="freq-btn-diario" style="background:transparent;border:2px solid #4ade80;color:#4ade80;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Diario</button>
+          <button onclick="setFreq('e-freq',7,this)" data-i18n="freq-btn-semanal" style="background:transparent;border:2px solid #facc15;color:#facc15;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Semanal</button>
+          <button onclick="setFreq('e-freq',14,this)" data-i18n="freq-btn-bisemanal" style="background:transparent;border:2px solid #f97316;color:#f97316;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Bisemanal</button>
+          <button onclick="setFreq('e-freq',30,this)" data-i18n="freq-btn-mensual" style="background:transparent;border:2px solid #ef4444;color:#ef4444;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;outline:2px solid #fff;outline-offset:2px;">Mensual</button>
         </div>
         <input type="hidden" id="e-freq" value="30">
       </div>
@@ -1664,6 +1666,10 @@ const TEXTS = {
     'freq-semanal': 'Semanal',
     'freq-bisemanal': 'Bisemanal',
     'freq-mensual': 'Mensual',
+    'freq-btn-diario': 'Diario',
+    'freq-btn-semanal': 'Semanal',
+    'freq-btn-bisemanal': 'Bisemanal',
+    'freq-btn-mensual': 'Mensual',
     'th-frecuencia': 'Frecuencia',
     'th-compras': 'Compras',
     'th-inicio': 'Inicio',
@@ -1828,6 +1834,10 @@ const TEXTS = {
     'freq-semanal': 'Weekly',
     'freq-bisemanal': 'Bi-weekly',
     'freq-mensual': 'Monthly',
+    'freq-btn-diario': 'Daily',
+    'freq-btn-semanal': 'Weekly',
+    'freq-btn-bisemanal': 'Biweekly',
+    'freq-btn-mensual': 'Monthly',
     'th-frecuencia': 'Frequency',
     'th-compras': 'Purchases',
     'th-inicio': 'Start',
@@ -2580,8 +2590,9 @@ function renderBacktest(amount, freqDays, endDate) {
 function setFreq(id, val, btn) {
   document.getElementById(id).value = val;
   const parent = btn.parentElement;
-  parent.querySelectorAll('button').forEach(b => b.style.border = '2px solid transparent');
-  btn.style.border = '2px solid #fff';
+  parent.querySelectorAll('button').forEach(b => { b.style.outline = 'none'; b.style.outlineOffset = '0'; });
+  btn.style.outline = '2px solid #fff';
+  btn.style.outlineOffset = '2px';
 }
 function setSellPct(v) { document.getElementById('b-sellpct').value = v; }
 function setTrigger(pct) {
