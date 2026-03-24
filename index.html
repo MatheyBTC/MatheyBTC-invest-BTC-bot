@@ -524,17 +524,15 @@ a { color: var(--orange); }
       <div class="c-param-section">
         <div class="c-param-label" data-i18n="c-price-label">Precio de BTC (U$S) <span style="font-size:11px;color:var(--text2);font-weight:400;">— tiempo real · editable</span></div>
         <input type="number" id="c-price" value="" placeholder="Auto (precio actual)"
-          style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;font-size:16px;font-weight:bold;width:100%;box-sizing:border-box;">
+          style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;font-size:16px;font-weight:bold;width:100%;box-sizing:border-box;"
+          oninput="if(document.getElementById('c-results').style.display!='none') runPlanC();">
       </div>
 
       <!-- BTC en Colateral -->
       <div class="c-param-section">
         <div class="c-param-label" data-i18n="c-btc-colateral-label">BTC en Colateral</div>
         <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:6px;">
-          <button class="quick-btn" id="cbtc-btn-01"  onclick="setCBTC(0.1)">0.1</button>
-          <button class="quick-btn" id="cbtc-btn-02"  onclick="setCBTC(0.2)">0.2</button>
           <button class="quick-btn" id="cbtc-btn-025" onclick="setCBTC(0.25)">0.25</button>
-          <button class="quick-btn" id="cbtc-btn-03"  onclick="setCBTC(0.3)">0.3</button>
           <button class="quick-btn" id="cbtc-btn-05"  onclick="setCBTC(0.5)">0.5</button>
           <button class="quick-btn" id="cbtc-btn-075" onclick="setCBTC(0.75)">0.75</button>
           <button class="quick-btn active" id="cbtc-btn-1" onclick="setCBTC(1)">1</button>
@@ -580,13 +578,9 @@ a { color: var(--orange); }
         <div class="c-param-label" data-i18n="c-months-label">Meses</div>
         <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:6px;">
           <button class="quick-btn" id="cmo-btn-1"  onclick="setCMonths(1)">1</button>
-          <button class="quick-btn" id="cmo-btn-2"  onclick="setCMonths(2)">2</button>
           <button class="quick-btn" id="cmo-btn-3"  onclick="setCMonths(3)">3</button>
           <button class="quick-btn" id="cmo-btn-6"  onclick="setCMonths(6)">6</button>
-          <button class="quick-btn" id="cmo-btn-9"  onclick="setCMonths(9)">9</button>
           <button class="quick-btn active" id="cmo-btn-12" onclick="setCMonths(12)">12</button>
-          <button class="quick-btn" id="cmo-btn-18" onclick="setCMonths(18)">18</button>
-          <button class="quick-btn" id="cmo-btn-24" onclick="setCMonths(24)">24</button>
           <div style="display:flex;flex-direction:column;gap:2px;">
             <span style="font-size:10px;color:var(--text2);">Manual</span>
             <div style="display:flex;align-items:center;gap:4px;">
@@ -2464,8 +2458,8 @@ function setCBTC(v) {
   updateEffectiveRate();
 }
 function highlightCBTCBtn(v) {
-  const map = { 0.1: 'cbtc-btn-01', 0.2: 'cbtc-btn-02', 0.25: 'cbtc-btn-025', 0.3: 'cbtc-btn-03', 0.5: 'cbtc-btn-05', 0.75: 'cbtc-btn-075', 1: 'cbtc-btn-1' };
-  ['cbtc-btn-01','cbtc-btn-02','cbtc-btn-025','cbtc-btn-03','cbtc-btn-05','cbtc-btn-075','cbtc-btn-1'].forEach(id => {
+  const map = { 0.25: 'cbtc-btn-025', 0.5: 'cbtc-btn-05', 0.75: 'cbtc-btn-075', 1: 'cbtc-btn-1' };
+  ['cbtc-btn-025','cbtc-btn-05','cbtc-btn-075','cbtc-btn-1'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.className = 'quick-btn';
   });
@@ -2497,8 +2491,8 @@ function setCMonths(v) {
   highlightCMonthsBtn(v);
 }
 function highlightCMonthsBtn(v) {
-  const map = { 1: 'cmo-btn-1', 2: 'cmo-btn-2', 3: 'cmo-btn-3', 6: 'cmo-btn-6', 9: 'cmo-btn-9', 12: 'cmo-btn-12', 18: 'cmo-btn-18', 24: 'cmo-btn-24' };
-  ['cmo-btn-1','cmo-btn-2','cmo-btn-3','cmo-btn-6','cmo-btn-9','cmo-btn-12','cmo-btn-18','cmo-btn-24'].forEach(id => {
+  const map = { 1: 'cmo-btn-1', 3: 'cmo-btn-3', 6: 'cmo-btn-6', 12: 'cmo-btn-12' };
+  ['cmo-btn-1','cmo-btn-3','cmo-btn-6','cmo-btn-12'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.className = 'quick-btn';
   });
@@ -2523,6 +2517,10 @@ function syncSlider(hiddenId, sliderId, displayId) {
   const v = parseFloat(document.getElementById(sliderId).value);
   document.getElementById(hiddenId).value = v;
   document.getElementById(displayId).textContent = v.toLocaleString('es-AR', { minimumFractionDigits: v % 1 === 0 ? 0 : 1, maximumFractionDigits: 2 }).replace('.', ',');
+  // Also update numeric input (e.g. c-apr-display-input)
+  const numInputId = sliderId.replace('-slider', '-display-input');
+  const numInput = document.getElementById(numInputId);
+  if (numInput) numInput.value = v;
   updateEffectiveRate();
 }
 function adjSlider(hiddenId, sliderId, displayId, delta) {
@@ -2570,9 +2568,9 @@ function updateBenefitSection() {
   const futurePrice = priceInput * (1 + cGrowthPct / 100);
   document.getElementById('c-growth-target-price').textContent = '$' + fmt(futurePrice, 0);
   const portfolioValue = btcTotal * futurePrice;
-  const benefitUSD = portfolioValue - repay - btcAmount * priceInput;
-  const benefitBTC = benefitUSD / futurePrice;
-  const rend = (benefitUSD / (btcAmount * priceInput)) * 100;
+  const benefitUSD = portfolioValue - repay;
+  const benefitBTC = benefitUSD / futurePrice - btcAmount;
+  const rend = (benefitBTC / btcAmount) * 100;
   const btcFinal = btcAmount + benefitBTC;
   const el_usd = document.getElementById('c-benefit-usd');
   const el_btc = document.getElementById('c-benefit-btc');
@@ -2671,7 +2669,7 @@ function runPlanC() {
                 ltv, apr, months, feeP, feeS, mcPct, liqPct };
 
   // --- Gauge LTV ---
-  const gaugePct = ltv * 100;
+  const gaugePct = (repay / (btcAmount * priceInput)) * 100;
   const el_badge = document.getElementById('c-ltv-badge');
   if (el_badge) { el_badge.textContent = gaugePct.toFixed(0) + '%'; }
   const el_gpct = document.getElementById('c-gauge-pct');
@@ -2719,7 +2717,7 @@ function runPlanC() {
   document.getElementById('c-btc-reinvest').textContent = fmtBTC(btcReinvested);
   document.getElementById('c-btc-total').textContent = fmtBTC(btcTotal);
   document.getElementById('c-btc-gain').textContent = '+' + btcReinvested.toFixed(6) + ' BTC extra';
-  const ltvAfter = loan / (btcTotal * priceInput) * 100;
+  const ltvAfter = repay / (btcTotal * priceInput) * 100;
   const ltvDelta = ltvAfter - gaugePct;
   document.getElementById('c-loop-ltv-before').textContent = gaugePct.toFixed(1) + '%';
   document.getElementById('c-loop-ltv-after').textContent = ltvAfter.toFixed(1) + '%';
@@ -2800,31 +2798,71 @@ function setCLoopGrowth(pct) {
 
 function updateLoopSimSection() {
   if (!lastPlanC) return;
-  const { loan, repay, priceInput, btcAmount, btcTotal } = lastPlanC;
-  const feeSwap   = (parseFloat(document.getElementById('c-loop-feeswap').value)   || 0) / 100;
-  const slippage  = (parseFloat(document.getElementById('c-loop-slippage').value)  || 0) / 100;
+  const { loan, repay, priceInput, btcAmount, mcPct, liqPct } = lastPlanC;
+  const feeSwap  = (parseFloat(document.getElementById('c-loop-feeswap').value)  || 0) / 100;
+  const slippage = (parseFloat(document.getElementById('c-loop-slippage').value) || 0) / 100;
 
-  const precioFuturo     = priceInput * (1 + cLoopGrowthPct / 100);
-  const btcRecomprado    = (loan / priceInput) * (1 - feeSwap - slippage);
-  const colateralFinal   = btcAmount + btcRecomprado;
-  const ltvDespues       = loan / (colateralFinal * precioFuturo) * 100;
-  const beneficioUSD     = colateralFinal * precioFuturo - repay - btcAmount * priceInput;
-  const beneficioBTC     = beneficioUSD / precioFuturo;
-  const rendimiento      = (beneficioUSD / (btcAmount * priceInput)) * 100;
+  const btcRecomprado  = (loan / priceInput) * (1 - feeSwap - slippage);
+  const colateralFinal = btcAmount + btcRecomprado;
+  const ltvAntes       = (repay / (btcAmount * priceInput)) * 100;
+  const ltvDespues     = (repay / (colateralFinal * priceInput)) * 100;
+  const ltvDelta       = ltvAntes - ltvDespues;
+  const newMC          = (repay / colateralFinal) / (mcPct / 100);
+  const newLiq         = (repay / colateralFinal) / (liqPct / 100);
+  const newMCpct       = (newMC / priceInput - 1) * 100;
+  const newLiqpct      = (newLiq / priceInput - 1) * 100;
+  const precioFuturo   = priceInput * (1 + cLoopGrowthPct / 100);
+  const beneficioUSD   = colateralFinal * precioFuturo - repay;
+  const beneficioBTC   = beneficioUSD / precioFuturo - btcAmount;
+  const rendimiento    = (beneficioBTC / btcAmount) * 100;
+  const btcTotalFinal  = btcAmount + Math.max(0, beneficioBTC);
 
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
   const setColor = (id, color) => { const el = document.getElementById(id); if (el) el.style.color = color; };
 
+  // BTC row
+  set('c-btc-reinvest', fmtBTC(Math.max(0, btcRecomprado)));
+  set('c-btc-total', fmtBTC(colateralFinal));
+  set('c-btc-gain', '+' + fmtBTC(Math.max(0, btcRecomprado)) + ' BTC extra');
+
+  // LTV antes/después
+  set('c-loop-ltv-before', ltvAntes.toFixed(1) + '%');
+  set('c-loop-ltv-after', ltvDespues.toFixed(1) + '%');
+  const deltaEl = document.getElementById('c-loop-ltv-delta');
+  if (deltaEl) {
+    deltaEl.textContent = '↘ ' + ltvDelta.toFixed(1) + '%';
+    deltaEl.style.background = ltvDelta > 0 ? 'var(--green)' : 'var(--red)';
+    deltaEl.style.color = '#000';
+  }
+
+  // New MC / Liq
+  set('c-loop-mc', '$' + fmt(newMC, 0));
+  set('c-loop-mc-pct', fmtPct(newMCpct) + ' del precio actual');
+  set('c-loop-liq', '$' + fmt(newLiq, 0));
+  set('c-loop-liq-pct', fmtPct(newLiqpct) + ' del precio actual');
+
+  // Sim results
   set('c-loop-precio-futuro', '$' + fmt(precioFuturo, 0));
   set('c-loop-btc-recomprado', fmtBTC(Math.max(0, btcRecomprado)));
   set('c-loop-colateral-final', fmtBTC(colateralFinal));
-  set('c-loop-ltv-futuro', ltvDespues.toFixed(1) + '%');
-  setColor('c-loop-ltv-futuro', ltvDespues < 50 ? 'var(--green)' : ltvDespues < 65 ? 'var(--yellow)' : 'var(--red)');
-  set('c-loop-benefit-usd', (beneficioUSD >= 0 ? '+$' : '-$') + fmt(Math.abs(beneficioUSD), 0));
-  setColor('c-loop-benefit-usd', beneficioUSD >= 0 ? 'var(--green)' : 'var(--red)');
+  const ltvDespFutEl = document.getElementById('c-loop-ltv-futuro');
+  if (ltvDespFutEl) {
+    ltvDespFutEl.textContent = ltvDespues.toFixed(1) + '%';
+    ltvDespFutEl.style.color = ltvDespues < 50 ? 'var(--green)' : ltvDespues < 65 ? 'var(--yellow)' : 'var(--red)';
+  }
+  const bUSD = document.getElementById('c-loop-benefit-usd');
+  if (bUSD) { bUSD.textContent = (beneficioUSD >= 0 ? '+$' : '-$') + fmt(Math.abs(beneficioUSD), 0); bUSD.style.color = beneficioUSD >= 0 ? 'var(--green)' : 'var(--red)'; }
   set('c-loop-benefit-btc', fmtBTC(Math.max(0, beneficioBTC)));
-  set('c-loop-rendimiento', (rendimiento >= 0 ? '+' : '') + rendimiento.toFixed(2) + '%');
-  setColor('c-loop-rendimiento', rendimiento >= 0 ? 'var(--green)' : 'var(--red)');
+  const rEl = document.getElementById('c-loop-rendimiento');
+  if (rEl) { rEl.textContent = (rendimiento >= 0 ? '+' : '') + rendimiento.toFixed(2) + '%'; rEl.style.color = rendimiento >= 0 ? 'var(--green)' : 'var(--red)'; }
+
+  // BTC Total Final (if element exists)
+  const btcFinalEl = document.getElementById('c-loop-btc-total-final');
+  if (btcFinalEl) btcFinalEl.textContent = fmtBTC(btcTotalFinal);
+
+  // Growth target price display in loop header
+  const growthTarget = document.getElementById('c-loop-growth-target');
+  if (growthTarget) growthTarget.textContent = '→ $' + fmt(precioFuturo, 0);
 }
 
 // ============================================================
@@ -2832,13 +2870,13 @@ function updateLoopSimSection() {
 // ============================================================
 function updateTopUp() {
   if (!lastPlanC) return;
-  const { loan, priceInput, btcAmount } = lastPlanC;
+  const { loan, repay, priceInput, btcAmount } = lastPlanC;
   const sliderEl = document.getElementById('c-topup-ltv-target');
   const ltvObjetivoPct = sliderEl ? parseFloat(sliderEl.value) : 50;
   const ltvObjetivo = ltvObjetivoPct / 100;
   const showEl = document.getElementById('c-topup-ltv-target-show');
   if (showEl) showEl.textContent = ltvObjetivoPct.toFixed(0) + '%';
-  const btcColateralNeeded = loan / (ltvObjetivo * priceInput);
+  const btcColateralNeeded = repay / (ltvObjetivo * priceInput);
   const topUp = btcColateralNeeded - btcAmount;
 
   const el_btc = document.getElementById('c-topup-btc');
@@ -2847,7 +2885,7 @@ function updateTopUp() {
   const el_status = document.getElementById('c-topup-status');
   const box = document.getElementById('c-topup-box');
 
-  const ltvNow = (loan / (btcAmount * priceInput)) * 100;
+  const ltvNow = (repay / (btcAmount * priceInput)) * 100;
   if (el_ltvNow) { el_ltvNow.textContent = ltvNow.toFixed(1) + '%'; el_ltvNow.style.color = ltvNow < 50 ? 'var(--green)' : ltvNow < 65 ? 'var(--yellow)' : 'var(--red)'; }
 
   if (topUp > 0) {
