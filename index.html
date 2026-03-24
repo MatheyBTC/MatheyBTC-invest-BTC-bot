@@ -148,7 +148,7 @@ a { color: var(--orange); }
 
 /* PLAN C — Slider rows */
 .c-param-section { margin-bottom: 20px; }
-.c-param-label { font-size: 13px; color: var(--text2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+.c-param-label { font-size: 13px; color: var(--text2); margin-bottom: 8px; letter-spacing: 0.3px; }
 .slider-row { display: flex; align-items: center; gap: 8px; }
 .slider-row input[type=range] { flex: 1; accent-color: var(--orange); height: 4px; cursor: pointer; }
 .slider-adj-btn {
@@ -575,9 +575,12 @@ a { color: var(--orange); }
           <button class="quick-btn active" id="cbtc-btn-1" onclick="setCBTC(1)">1</button>
           <div style="display:flex;flex-direction:column;gap:2px;">
             <span style="font-size:10px;color:var(--text2);">Manual</span>
-            <input type="number" id="c-btc" value="1" step="0.00000001" min="0.00000001"
-              style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:6px;font-size:13px;width:90px;min-height:36px;box-sizing:border-box;"
-              oninput="highlightCBTCBtn(this.value)">
+            <div style="display:flex;align-items:center;gap:4px;">
+              <input type="number" id="c-btc" value="1" step="0.00000001" min="0.00000001"
+                style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:6px;font-size:13px;width:90px;min-height:36px;box-sizing:border-box;"
+                oninput="highlightCBTCBtn(this.value)">
+              <span style="font-size:13px;color:var(--text2);">BTC</span>
+            </div>
           </div>
         </div>
       </div>
@@ -605,7 +608,7 @@ a { color: var(--orange); }
         </div>
         <div style="margin-top:10px;">
           <input type="range" id="c-ltv-slider" min="10" max="90" step="1" value="50"
-            style="width:100%;"
+            style="width:100%;accent-color:var(--orange);"
             oninput="document.getElementById('c-ltv').value=this.value; highlightCLTVBtn(this.value);">
         </div>
       </div>
@@ -636,7 +639,7 @@ a { color: var(--orange); }
 
       <!-- Panel izquierdo: Sliders -->
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;">
-        <div style="font-size:12px;font-weight:700;color:var(--text2);letter-spacing:.04em;margin-bottom:14px;">Tasas y Costos</div>
+        <div style="font-size:12px;font-weight:700;color:var(--text2);letter-spacing:.04em;margin-bottom:14px;">Tasas + Costos</div>
 
         <!-- APR -->
         <div class="c-param-section" style="margin-bottom:14px;">
@@ -689,8 +692,10 @@ a { color: var(--orange); }
         <!-- Tasa Total -->
         <div class="c-param-section">
           <div class="c-param-label">Tasa Total %</div>
-          <div class="effective-rate" id="c-effective-rate">5,00%</div>
-          <div class="effective-rate-label">/ año (APR + Fee Plat.)</div>
+          <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;">
+            <div class="effective-rate" id="c-effective-rate">5,00%</div>
+            <div class="effective-rate-label">(Fee APR + Fee App)</div>
+          </div>
         </div>
       </div>
 
@@ -700,7 +705,7 @@ a { color: var(--orange); }
 
         <!-- Margin Call -->
         <div class="c-param-section umbral-section" style="margin-bottom:20px;">
-          <label style="display:block;margin-bottom:10px;font-size:13px;font-weight:700;color:var(--orange);">Margin Call</label>
+          <label style="display:block;margin-bottom:10px;font-size:15px;font-weight:700;color:var(--orange);">Margin Call</label>
           <div style="display:flex;align-items:center;gap:10px;">
             <button class="slider-adj-btn" onclick="adjUmbral('c-mc',-1,50,95)">−</button>
             <input type="number" id="c-mc" class="umbral-input" value="80" min="50" max="95">
@@ -711,7 +716,7 @@ a { color: var(--orange); }
 
         <!-- Liquidación -->
         <div class="c-param-section umbral-section">
-          <label style="display:block;margin-bottom:10px;font-size:13px;font-weight:700;color:var(--red);">Liquidación</label>
+          <label style="display:block;margin-bottom:10px;font-size:15px;font-weight:700;color:var(--red);">Liquidación</label>
           <div style="display:flex;align-items:center;gap:10px;">
             <button class="slider-adj-btn" onclick="adjUmbral('c-liq-thr',-1,60,99)">−</button>
             <input type="number" id="c-liq-thr" class="umbral-input" value="90" min="60" max="99">
@@ -796,6 +801,44 @@ a { color: var(--orange); }
             <div class="rc-label" id="c-liq-title">Precio Liquidación (90% LTV)</div>
             <div class="rc-value" id="c-liq">—</div>
             <div class="rc-sub" id="c-liq-pct">— caída</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Simulador Caída de Precio -->
+    <div class="card" id="c-sim-card">
+      <h3>📉 Simulador Caída de Precio</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;align-items:start;">
+        <div class="c-param-section" style="margin-bottom:0;">
+          <div class="c-param-label">Si BTC vale a (U$S)</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <input type="number" id="c-sim-price2" placeholder="Ej: 50000" min="1"
+              style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;font-size:15px;font-weight:bold;width:160px;box-sizing:border-box;"
+              oninput="runSimC()">
+            <button class="btn" onclick="document.getElementById('c-sim-price2').value=Math.round(currentPrice||0); runSimC();" style="white-space:nowrap;font-size:12px;padding:7px 12px;">Precio Actual</button>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="font-size:12px;color:var(--text2);">Precio actual cargado: <span id="c-sim-current" style="color:var(--text);font-weight:700;">—</span></div>
+        </div>
+      </div>
+      <div id="c-sim-results2" style="display:none;">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+          <div class="stat-box blue">
+            <div class="label">LTV Simulado</div>
+            <div class="value" id="c-sim-ltv2">—</div>
+            <div class="sub" id="c-sim-ltv-status">—</div>
+          </div>
+          <div class="stat-box" style="border-color:var(--orange)">
+            <div class="label" style="color:var(--orange)">Distancia Margin Call</div>
+            <div class="value" id="c-sim-mc-dist">—</div>
+            <div class="sub" id="c-sim-mc-price">BTC a U$S —</div>
+          </div>
+          <div class="stat-box" style="border-color:var(--red)">
+            <div class="label" style="color:var(--red)">Distancia Liquidación</div>
+            <div class="value" id="c-sim-liq-dist">—</div>
+            <div class="sub" id="c-sim-liq-price">BTC a U$S —</div>
           </div>
         </div>
       </div>
@@ -1883,7 +1926,7 @@ const TEXTS = {
     'b-historial-title': '🔄 Trigger History',
     // Plan C
     'c-params-title': '⚙️ Collateral Loan Parameters',
-    'c-btc-colateral-label': 'BTC as Collateral',
+    'c-btc-colateral-label': 'BTC in Collateral',
     'c-price-label': 'BTC Price (U$S)',
     'c-ltv-label': 'Initial LTV (%)',
     'c-apr-label': 'APR (%)',
@@ -2985,6 +3028,49 @@ function updateLTVTable() {
 }
 
 // ============================================================
+//  PLAN C — Simulador Caída de Precio
+// ============================================================
+function runSimC() {
+  const simPrice = parseFloat(document.getElementById('c-sim-price2').value);
+  if (!simPrice || simPrice <= 0) { document.getElementById('c-sim-results2').style.display = 'none'; return; }
+
+  const btcAmt = parseFloat(document.getElementById('c-btc').value) || 1;
+  const ltv = parseFloat(document.getElementById('c-ltv').value) || 50;
+  const mcLTV = parseFloat(document.getElementById('c-mc').value) || 80;
+  const liqLTV = parseFloat(document.getElementById('c-liq-thr').value) || 90;
+  const price = parseFloat(document.getElementById('c-price').value) || currentPrice || simPrice;
+
+  const loanAmt = btcAmt * price * (ltv / 100);
+  const colValue = btcAmt * simPrice;
+  const simLTV = colValue > 0 ? (loanAmt / colValue) * 100 : 0;
+
+  const mcPrice = loanAmt / (btcAmt * (mcLTV / 100));
+  const liqPrice = loanAmt / (btcAmt * (liqLTV / 100));
+
+  const mcDist = ((simPrice - mcPrice) / simPrice) * 100;
+  const liqDist = ((simPrice - liqPrice) / simPrice) * 100;
+
+  const ltvEl = document.getElementById('c-sim-ltv2');
+  ltvEl.textContent = simLTV.toFixed(1) + '%';
+  ltvEl.style.color = simLTV >= liqLTV ? 'var(--red)' : simLTV >= mcLTV ? 'var(--orange)' : 'var(--green)';
+
+  const status = simLTV >= liqLTV ? '⚠️ Liquidación' : simLTV >= mcLTV ? '⚠️ Margin Call' : '✅ Seguro';
+  document.getElementById('c-sim-ltv-status').textContent = status;
+
+  const mcDistEl = document.getElementById('c-sim-mc-dist');
+  mcDistEl.textContent = mcDist >= 0 ? '-' + mcDist.toFixed(1) + '%' : '⚠️ Superado';
+  mcDistEl.style.color = mcDist < 0 ? 'var(--red)' : mcDist < 10 ? 'var(--orange)' : 'var(--green)';
+  document.getElementById('c-sim-mc-price').textContent = 'BTC a U$S ' + fmt(mcPrice, 0);
+
+  const liqDistEl = document.getElementById('c-sim-liq-dist');
+  liqDistEl.textContent = liqDist >= 0 ? '-' + liqDist.toFixed(1) + '%' : '⚠️ Superado';
+  liqDistEl.style.color = liqDist < 0 ? 'var(--red)' : liqDist < 5 ? 'var(--orange)' : 'var(--green)';
+  document.getElementById('c-sim-liq-price').textContent = 'BTC a U$S ' + fmt(liqPrice, 0);
+
+  document.getElementById('c-sim-results2').style.display = 'block';
+}
+
+// ============================================================
 //  PLAN C — Main calculation
 // ============================================================
 function runPlanC() {
@@ -3093,6 +3179,8 @@ function runPlanC() {
   updateCHistoryChart();
 
   document.getElementById('c-results').style.display = 'block';
+  const simCurEl = document.getElementById('c-sim-current');
+  if (simCurEl) simCurEl.textContent = '$' + fmt(priceInput, 0);
 }
 
 // ============================================================
