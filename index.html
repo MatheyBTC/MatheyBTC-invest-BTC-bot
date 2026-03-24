@@ -188,7 +188,7 @@ a { color: var(--orange); }
   background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
   padding: 14px 16px;
 }
-.result-card .rc-label { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.result-card .rc-label { font-size: 10px; color: var(--text2); letter-spacing: 0.5px; margin-bottom: 6px; }
 .result-card .rc-value { font-size: 20px; font-weight: bold; color: var(--orange); }
 .result-card .rc-sub { font-size: 11px; color: var(--text2); margin-top: 3px; }
 .result-card.rc-yellow { border-color: var(--orange); }
@@ -748,6 +748,11 @@ a { color: var(--orange); }
             <div class="rc-value" id="c-repay">—</div>
             <div class="rc-sub" id="c-fees-total">Fees: —</div>
           </div>
+          <div class="result-card">
+            <div class="rc-label">Costo Mensual Aprox.</div>
+            <div class="rc-value" id="c-monthly-cost">—</div>
+            <div class="rc-sub">U$S / mes</div>
+          </div>
           <div class="result-card rc-yellow">
             <div class="rc-label" id="c-margin-call-title">Precio Margin Call (80% LTV)</div>
             <div class="rc-value" id="c-margin">—</div>
@@ -757,11 +762,6 @@ a { color: var(--orange); }
             <div class="rc-label" id="c-liq-title">Precio Liquidación (90% LTV)</div>
             <div class="rc-value" id="c-liq">—</div>
             <div class="rc-sub" id="c-liq-pct">— caída</div>
-          </div>
-          <div class="result-card" style="grid-column:1/-1;">
-            <div class="rc-label">Costo Mensual Aprox.</div>
-            <div class="rc-value" id="c-monthly-cost">—</div>
-            <div class="rc-sub">U$S / mes</div>
           </div>
         </div>
       </div>
