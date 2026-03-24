@@ -3609,59 +3609,19 @@ function runBacktest() {
   const ctx = document.getElementById('chartBT').getContext('2d');
   if (chartBT) chartBT.destroy();
   const step = Math.max(1, Math.floor(equity.length / 300));
-  // Always include trade entry/exit dates so points land on existing labels
-  const tradeDates = new Set(trades.flatMap(t => [t.entryDate, t.exitDate]));
-  const filtered = equity.filter((_, i) => i % step === 0 || tradeDates.has(equity[i].date));
-  const allDates = filtered.map(e => e.date);
-
-  // Build equity map for quick lookup
-  const equityMap = {};
-  equity.forEach(e => { equityMap[e.date] = e.capital; });
-
-  // Sparse arrays aligned to allDates — null everywhere except trade entry/exit dates
-  const buyData = allDates.map(d => {
-    const t = trades.find(t2 => t2.entryDate === d);
-    return t ? (equityMap[d] ?? t.capital) : null;
-  });
-  const sellData = allDates.map(d => {
-    const t = trades.find(t2 => t2.exitDate === d);
-    return t ? (equityMap[d] ?? t.capitalAfter) : null;
-  });
-
-  const opts = chartOpts('U$S');
-  opts.plugins = opts.plugins || {};
-  opts.plugins.legend = { labels: { font: { size: 12 }, color: '#e8e8e8' } };
+  const filtered = equity.filter((_, i) => i % step === 0);
 
   chartBT = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: allDates,
-      datasets: [
-        {
-          label: 'Capital U$S',
-          data: filtered.map(e => e.capital),
-          borderColor: '#f7931a', backgroundColor: 'rgba(247,147,26,0.1)',
-          fill: true, pointRadius: 0, tension: 0.3, order: 3
-        },
-        {
-          label: '🟢 Compra',
-          data: buyData,
-          borderColor: 'transparent', backgroundColor: '#4ade80',
-          pointRadius: 8, pointHoverRadius: 10,
-          pointStyle: 'circle', showLine: false, order: 1,
-          spanGaps: false
-        },
-        {
-          label: '🔴 Venta',
-          data: sellData,
-          borderColor: 'transparent', backgroundColor: '#ef4444',
-          pointRadius: 8, pointHoverRadius: 10,
-          pointStyle: 'circle', showLine: false, order: 2,
-          spanGaps: false
-        }
-      ]
+      labels: filtered.map(e => e.date),
+      datasets: [{
+        label: 'Capital U$S', data: filtered.map(e => e.capital),
+        borderColor: '#f7931a', backgroundColor: 'rgba(247,147,26,0.1)',
+        fill: true, pointRadius: 0, tension: 0.3
+      }]
     },
-    options: opts
+    options: chartOpts('U$S')
   });
 
   // Trades table
