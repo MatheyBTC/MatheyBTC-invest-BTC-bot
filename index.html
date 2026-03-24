@@ -87,7 +87,7 @@ a { color: var(--orange); }
 
 /* TABLES */
 .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
-.tbl th { background: var(--bg3); color: var(--text2); padding: 10px 12px; text-align: left; font-size: 11px; border-bottom: 1px solid var(--border); }
+.tbl th { background: var(--bg3); color: var(--text2); padding: 10px 12px; text-align: left; font-size: 13px; border-bottom: 1px solid var(--border); }
 .tbl td { padding: 9px 12px; border-bottom: 1px solid #1f1f1f; }
 .tbl tr:hover td { background: var(--bg3); }
 .tbl .num { text-align: right; font-family: monospace; }
@@ -141,7 +141,7 @@ a { color: var(--orange); }
 
 /* PLAN C — Slider rows */
 .c-param-section { margin-bottom: 20px; }
-.c-param-label { font-size: 11px; color: var(--text2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+.c-param-label { font-size: 13px; color: var(--text2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
 .slider-row { display: flex; align-items: center; gap: 8px; }
 .slider-row input[type=range] { flex: 1; accent-color: var(--orange); height: 4px; cursor: pointer; }
 .slider-adj-btn {
@@ -153,7 +153,7 @@ a { color: var(--orange); }
 .slider-adj-btn:hover { background: var(--border); }
 .slider-display { min-width: 38px; text-align: right; font-weight: 700; color: var(--orange); font-size: 15px; }
 .effective-rate { color: var(--orange); font-size: 22px; font-weight: bold; margin: 6px 0 2px; }
-.effective-rate-label { font-size: 11px; color: var(--text2); }
+.effective-rate-label { font-size: 13px; color: var(--text2); }
 
 /* PLAN C — Responsive grids */
 @media (max-width: 600px) {
@@ -181,16 +181,16 @@ a { color: var(--orange); }
 .gauge-svg { width: 100%; height: 100%; }
 .gauge-value { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); text-align: center; }
 .gauge-value .big { font-size: 28px; font-weight: bold; color: var(--green); }
-.gauge-value .small { font-size: 11px; color: var(--text2); }
+.gauge-value .small { font-size: 13px; color: var(--text2); }
 .results-grid { display: grid; grid-template-columns: 220px 1fr; gap: 20px; align-items: start; }
 .results-right { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .result-card {
   background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
   padding: 14px 16px;
 }
-.result-card .rc-label { font-size: 10px; color: var(--text2); letter-spacing: 0.5px; margin-bottom: 6px; }
-.result-card .rc-value { font-size: 20px; font-weight: bold; color: var(--orange); }
-.result-card .rc-sub { font-size: 11px; color: var(--text2); margin-top: 3px; }
+.result-card .rc-label { font-size: 13px; color: var(--text2); letter-spacing: 0.5px; margin-bottom: 6px; }
+.result-card .rc-value { font-size: 22px; font-weight: bold; color: var(--orange); }
+.result-card .rc-sub { font-size: 13px; color: var(--text2); margin-top: 3px; }
 .result-card.rc-yellow { border-color: var(--orange); }
 .result-card.rc-yellow .rc-value { color: var(--orange); }
 .result-card.rc-red { border-color: var(--red); }
@@ -204,14 +204,14 @@ a { color: var(--orange); }
 .loop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .ltv-arrow-row { background: var(--bg3); border-radius: 8px; padding: 16px; display: flex; align-items: center; justify-content: center; gap: 24px; margin-bottom: 12px; }
 .ltv-arrow-val { text-align: center; }
-.ltv-arrow-val .lav-label { font-size: 10px; color: var(--text2); text-transform: uppercase; margin-bottom: 4px; }
+.ltv-arrow-val .lav-label { font-size: 12px; color: var(--text2); text-transform: uppercase; margin-bottom: 4px; }
 .ltv-arrow-val .lav-num { font-size: 28px; font-weight: bold; }
 .ltv-arrow { font-size: 20px; color: var(--text2); }
 .ltv-delta-badge { background: #0a2a0a; border: 1px solid var(--green); color: var(--green); border-radius: 20px; padding: 4px 12px; font-size: 13px; font-weight: bold; }
 
 /* PLAN C — Dist progress bars */
 .dist-bar-wrap { margin-bottom: 14px; }
-.dist-bar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px; }
+.dist-bar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 13px; }
 .dist-bar-inner { height: 8px; border-radius: 4px; transition: width 0.5s; }
 
 /* LTV-specific stat box variant */
@@ -1934,15 +1934,15 @@ function clearCache() {
   document.getElementById('dataStatus').className = 'data-badge warn';
   document.getElementById('dataStatus').textContent = 'Sin cargar';
   document.getElementById('dataRange').textContent = '';
-  document.getElementById('headerPrice').textContent = '— U$S';
-  document.getElementById('headerPriceDate').textContent = 'Sin datos';
+  const _hp = document.getElementById('headerPrice'); if (_hp) _hp.textContent = '— U$S';
+  const _hpd = document.getElementById('headerPriceDate'); if (_hpd) _hpd.textContent = 'Sin datos';
   alert('Caché limpiada. Presioná "Cargar precios" para volver a bajar los datos.');
 }
 
 function updatePriceDisplay() {
-  document.getElementById('headerPrice').textContent = '$' + fmt(currentPrice);
+  const _hp2 = document.getElementById('headerPrice'); if (_hp2) _hp2.textContent = '$' + fmt(currentPrice);
   const last = priceHistory[priceHistory.length - 1];
-  document.getElementById('headerPriceDate').textContent = 'Precio al ' + last.date;
+  const _hpd2 = document.getElementById('headerPriceDate'); if (_hpd2) _hpd2.textContent = 'Precio al ' + last.date;
   document.getElementById('dataStatus').className = 'data-badge ok';
   document.getElementById('dataStatus').textContent = '✓ ' + priceHistory.length + ' días (caché)';
   document.getElementById('dataRange').textContent =
@@ -3363,6 +3363,7 @@ function renderSignals() {
     equityData.push({ date: s.date, value: btcVal + recoveredAccum });
 
     const tr = document.createElement('tr');
+    tr.style.background = idx % 2 === 0 ? 'var(--bg3)' : 'transparent';
     tr.innerHTML = `
       <td>${s.date}</td>
       <td><span class="${s.type === 'buy' ? 'badge-buy' : 'badge-sell'}">${s.type === 'buy' ? 'COMPRA' : 'VENTA'}</span></td>
@@ -3407,7 +3408,7 @@ function renderSignals() {
           fill: true, pointRadius: 3, tension: 0.3
         }]
       },
-      options: chartOpts('U$S')
+      options: (function(){ const o = chartOpts('U$S'); o.plugins.legend = { labels: { font: { size: 14 }, color: '#e8e8e8' } }; return o; })()
     });
   }
 }
@@ -3447,9 +3448,10 @@ function runDashboard() {
     { name: 'Plan C) Colateral', data: lastPlanC ? { totalBTC: lastPlanC.btcTotal, totalInvested: lastPlanC.priceInput * lastPlanC.btcAmount, avgPrice: lastPlanC.priceInput / lastPlanC.btcTotal, currentValue: lastPlanC.btcTotal * price, roi: ((lastPlanC.btcTotal * price - lastPlanC.priceInput * lastPlanC.btcAmount) / (lastPlanC.priceInput * lastPlanC.btcAmount)) * 100 } : null },
     { name: 'Plan D) Trading', data: lastPlanD ? { totalBTC: lastPlanD.currentBTC, totalInvested: lastPlanD.netInvested, avgPrice: lastPlanD.netInvested / lastPlanD.currentBTC, currentValue: lastPlanD.currentVal, roi: lastPlanD.pnlPct } : null },
   ];
-  plans.forEach(plan => {
+  plans.forEach((plan, i) => {
     const d = plan.data;
     const tr = document.createElement('tr');
+    tr.style.background = i % 2 === 0 ? 'var(--bg3)' : 'transparent';
     if (!d) {
       tr.innerHTML = `<td>${plan.name}</td><td colspan="5" style="color:var(--text2);font-size:12px;">Sin calcular — ir al plan y ejecutar primero</td>`;
     } else {
@@ -3477,6 +3479,7 @@ function runDashboard() {
     const done = acc >= btcNeeded;
     projData.push({ year: new Date().getFullYear() + y, acc, val, pct, done });
     const tr = document.createElement('tr');
+    tr.style.background = y % 2 === 0 ? 'var(--bg3)' : 'transparent';
     tr.innerHTML = `
       <td>${new Date().getFullYear() + y}</td>
       <td class="num">${fmtBTC(acc)}</td>
@@ -3508,7 +3511,7 @@ function runDashboard() {
     options: {
       responsive: true, maintainAspectRatio: false,
       interaction: { mode: 'index', intersect: false },
-      plugins: { legend: { labels: { color: '#aaa' } } },
+      plugins: { legend: { labels: { font: { size: 14 }, color: '#e8e8e8' } } },
       scales: {
         x: { ticks: { color: '#aaa' }, grid: { color: '#222' } },
         y: { ticks: { color: '#aaa', callback: v => '$' + fmt(v, 0) }, grid: { color: '#222' }, position: 'left' },
