@@ -3620,6 +3620,7 @@ function runDashboard() {
     { name: 'Plan B) DCA Re-compra', data: lastPlanB },
     { name: 'Plan C) Colateral', data: lastPlanC ? { totalBTC: lastPlanC.btcTotal, totalInvested: lastPlanC.priceInput * lastPlanC.btcAmount, avgPrice: lastPlanC.priceInput / lastPlanC.btcTotal, currentValue: lastPlanC.btcTotal * price, roi: ((lastPlanC.btcTotal * price - lastPlanC.priceInput * lastPlanC.btcAmount) / (lastPlanC.priceInput * lastPlanC.btcAmount)) * 100 } : null },
     { name: 'Plan D) Trading', data: lastPlanD ? { totalBTC: lastPlanD.currentBTC, totalInvested: lastPlanD.netInvested, avgPrice: lastPlanD.netInvested / lastPlanD.currentBTC, currentValue: lastPlanD.currentVal, roi: lastPlanD.pnlPct } : null },
+    { name: 'Plan E) DCA Cosecha', data: lastPlanE },
   ];
   plans.forEach((plan, i) => {
     const d = plan.data;
