@@ -139,11 +139,10 @@ def main():
     if signal and curr_date != last_date:
         emoji = "🟢" if signal == "COMPRA" else "🔴"
         msg = (
-            f"{emoji} <b>SEÑAL T3-CCI — {signal}</b>\n"
+            f"{emoji} <b>SEÑAL — {signal}</b>\n"
             f"Par: BTCUSDT Diario\n"
             f"Precio: <b>${curr_price:,.2f}</b>\n"
-            f"Fecha: {curr_date}\n"
-            f"T3-CCI: {curr_val:.2f}"
+            f"Fecha: {curr_date}"
         )
         send_telegram(msg)
         state["last_signal"] = signal
@@ -153,9 +152,9 @@ def main():
         # Reporte diario de estado
         trend = "📈 Alcista" if curr_val > 0 else "📉 Bajista"
         msg = (
-            f"📊 <b>T3-CCI Diario — Estado</b>\n"
+            f"📊 <b>Señal Diaria — Estado</b>\n"
             f"Precio BTC: <b>${curr_price:,.2f}</b>\n"
-            f"T3-CCI: {curr_val:.2f} ({trend})\n"
+            f"Tendencia: {trend}\n"
             f"Última señal: {last_signal or '—'} ({last_date or '—'})"
         )
         send_telegram(msg)
