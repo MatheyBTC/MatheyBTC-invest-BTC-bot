@@ -3795,6 +3795,233 @@ function exportPlanD() {
   XLSX.utils.book_append_sheet(wb, ws, 'Plan D Señales');
   XLSX.writeFile(wb, 'MatheyBTC_PlanD.xlsx');
 }
+
+function runPlanE() {
+  if (!priceHistory.length) { alert('Primero cargá los precios históricos.'); return; }
+
+  const amount          = parseFloat(document.getElementById('e-amount').value);
+  const freqDays        = getFreqDays(document.getElementById('e-freq').value);
+  const startDate       = document.getElementById('e-start').value;
+  const endDate         = document.getElementById('e-end').value;
+  const umbralVenta     = parseFloat(document.getElementById('e-umbral-venta').value) / 100;
+  const pctVenta        = parseFloat(document.getElementById('e-pct-venta').value) / 100;
+  const umbralRecompra  = parseFloat(document.getElementById('e-umbral-recompra').value) / 100;
+
+  // --- State ---
+  let btcStack      = 0;
+  let btcBought     = 0;
+  let totalInvested = 0;
+  let costPromedio  = 0;
+  let usdEspera     = 0;
+  let precioVenta   = 0;
+  let mesesEspera   = 0;
+  let lastSaleDate  = null;
+  let harvestCount  = 0;
+  const fallbackQueue = [];
+  const cycles        = [];
+  const equity        = [];
+
+  // Fixed monthly check dates from startDate (not reset by sales)
+  const checkDates = new Set();
+  let cd = addDays(startDate, 30);
+  while (cd <= endDate) { checkDates.add(cd); cd = addDays(cd, 30); }
+
+  let nextBuyDate = startDate;
+  let d = startDate;
+
+  while (d <= endDate) {
+    const price = getPriceAt(d);
+
+    // 1. Process fallback queue (synthetic DCA instalments)
+    for (let i = fallbackQueue.length - 1; i >= 0; i--) {
+      const q = fallbackQueue[i];
+      if (q.date <= d && price > 0) {
+        const btc = q.amount / price;
+        btcStack      += btc;
+        btcBought     += btc;
+        totalInvested += q.amount;
+        costPromedio   = btcBought > 0 ? totalInvested / btcBought : 0;
+        fallbackQueue.splice(i, 1);
+      }
+    }
+
+    // 2. DCA base purchase
+    if (d >= nextBuyDate && price > 0) {
+      const btc = amount / price;
+      btcStack      += btc;
+      btcBought     += btc;
+      totalInvested += amount;
+      costPromedio   = btcBought > 0 ? totalInvested / btcBought : 0;
+      nextBuyDate    = addDays(d, freqDays);
+    }
+
+    // 3. Monthly check (fixed clock from startDate)
+    if (checkDates.has(d)) {
+      if (usdEspera > 0 && price > 0) {
+        if (price <= precioVenta * (1 - umbralRecompra)) {
+          // RECOMPRA lump sum
+          const btc = usdEspera / price;
+          btcStack      += btc;
+          btcBought     += btc;
+          totalInvested += usdEspera;
+          costPromedio   = btcBought > 0 ? totalInvested / btcBought : 0;
+          const cycle = cycles[cycles.length - 1];
+          if (cycle) {
+            cycle.estado  = '✅ Recomprado';
+            cycle.detalle = d + ' a U$S ' + fmt(price, 0);
+          }
+          harvestCount++;
+          usdEspera = 0; precioVenta = 0; mesesEspera = 0;
+        } else {
+          mesesEspera++;
+          if (mesesEspera >= 3 && lastSaleDate && daysBetween(lastSaleDate, d) >= 90) {
+            // FALLBACK: 3 monthly instalments
+            const cuota = usdEspera / 3;
+            fallbackQueue.push({ date: addDays(d, 30), amount: cuota });
+            fallbackQueue.push({ date: addDays(d, 60), amount: cuota });
+            fallbackQueue.push({ date: addDays(d, 90), amount: cuota });
+            const cycle = cycles[cycles.length - 1];
+            if (cycle) {
+              cycle.estado  = '🔄 Re-invierte';
+              cycle.detalle = 'Re-invierte en DCA ' + d.substring(0, 7);
+            }
+            harvestCount++;
+            usdEspera = 0; precioVenta = 0; mesesEspera = 0;
+          }
+        }
+      } else if (usdEspera === 0 && btcStack > 0 && price > 0 && costPromedio > 0) {
+        // Check sale condition
+        const cooldownOk = !lastSaleDate || daysBetween(lastSaleDate, d) >= 30;
+        if (cooldownOk && price > costPromedio * (1 + umbralVenta)) {
+          const btcToSell     = btcStack * pctVenta;
+          const usdObtenido   = btcToSell * price;
+          const pctSobreCosto = ((price / costPromedio) - 1) * 100;
+          btcStack    -= btcToSell;
+          usdEspera    = usdObtenido;
+          precioVenta  = price;
+          lastSaleDate = d;
+          mesesEspera  = 0;
+          cycles.push({
+            id: cycles.length + 1,
+            fecha:        d,
+            precioVenta:  price,
+            btcVendido:   btcToSell,
+            usdObtenido,
+            pctSobreCosto,
+            estado:       '⏳ Esperando',
+            detalle:      'U$S en espera',
+          });
+        }
+      }
+    }
+
+    equity.push({ date: d, btc: btcStack, value: btcStack * price });
+    d = addDays(d, 1);
+  }
+
+  // Use price at endDate for historical accuracy
+  const endPrice     = getPriceAt(endDate);
+  const currentValue = btcStack * endPrice;
+  const roi          = totalInvested > 0 ? ((currentValue - totalInvested) / totalInvested) * 100 : 0;
+
+  lastPlanE = { totalBTC: btcStack, totalInvested, avgPrice: costPromedio, currentValue, roi, cycles };
+
+  // Plan A comparison (same params, no sells)
+  const purchasesA = calcDCA(startDate, endDate, amount, freqDays);
+  const aggA       = aggregateDCA(purchasesA);
+
+  // --- Render stat boxes ---
+  document.getElementById('e-btc').textContent      = fmtBTC(btcStack);
+  document.getElementById('e-harvests').textContent = harvestCount + ' cosecha(s)';
+  document.getElementById('e-avgprice').textContent = 'U$S ' + fmt(costPromedio, 0);
+  document.getElementById('e-invested').textContent = 'U$S ' + fmt(totalInvested, 0);
+  document.getElementById('e-value').textContent    = 'U$S ' + fmt(currentValue, 0);
+  document.getElementById('e-roi').textContent      = 'ROI: ' + fmtPct(roi);
+
+  // --- Comparativa vs Plan A ---
+  document.getElementById('e-vs-a-btc').textContent = fmtBTC(aggA.totalBTC);
+  document.getElementById('e-vs-e-btc').textContent = fmtBTC(btcStack);
+  const diff = btcStack - aggA.totalBTC;
+  document.getElementById('e-vs-diff').textContent  = fmtBTC(Math.abs(diff));
+  const winner = document.getElementById('e-vs-winner');
+  winner.textContent = diff >= 0 ? 'Plan E) es Superior' : 'Plan A) es Superior';
+  winner.style.color = diff >= 0 ? 'var(--green)' : 'var(--yellow)';
+
+  // --- Chart E ---
+  const ctx = document.getElementById('chartE').getContext('2d');
+  if (chartE) chartE.destroy();
+  const step     = Math.max(1, Math.floor(equity.length / 300));
+  const filtered = equity.filter((_, i) => i % step === 0);
+  const planAMap = {};
+  aggA.equity.forEach(e => { planAMap[e.date] = e.value; });
+  chartE = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: filtered.map(e => e.date),
+      datasets: [
+        { label: 'Plan E) DCA Cosecha', data: filtered.map(e => e.value),
+          borderColor: '#f7931a', pointRadius: 0, tension: 0.3, fill: false, spanGaps: true },
+        { label: 'Plan A) DCA Fijo', data: filtered.map(e => planAMap[e.date] || null),
+          borderColor: '#4a9eff', pointRadius: 0, tension: 0.3, fill: false, spanGaps: true },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#e0e0e0', font: { size: 13 } } } },
+      scales: {
+        x: { ticks: { color: '#888', maxTicksLimit: 12 }, grid: { color: '#222' } },
+        y: { ticks: { color: '#888', callback: v => '$' + fmt(v, 0) }, grid: { color: '#222' } }
+      }
+    }
+  });
+
+  // --- Cycles table ---
+  const tbody = document.getElementById('e-cycles-body');
+  tbody.innerHTML = '';
+  if (cycles.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" style="color:var(--text2);text-align:center;padding:16px;">Sin cosechas en el período</td></tr>';
+  } else {
+    cycles.forEach((c, i) => {
+      const tr = document.createElement('tr');
+      tr.style.background = i % 2 === 0 ? 'var(--bg3)' : 'transparent';
+      tr.innerHTML = `
+        <td>${c.id}</td>
+        <td>${c.fecha}</td>
+        <td class="num">U$S ${fmt(c.precioVenta, 0)}</td>
+        <td class="num">${fmtBTC(c.btcVendido)}</td>
+        <td class="num">U$S ${fmt(c.usdObtenido, 0)}</td>
+        <td class="num">${fmtPct(c.pctSobreCosto)}</td>
+        <td>${c.estado}</td>
+        <td style="font-size:12px;color:var(--text2)">${c.detalle}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  document.getElementById('e-results').style.display = 'block';
+}
+
+function exportPlanE() {
+  if (!lastPlanE) { alert('Calculá el Plan E primero.'); return; }
+  const wb = XLSX.utils.book_new();
+
+  const summary = [
+    ['Plan E) DCA Cosecha — Resumen'],
+    ['BTC Final', lastPlanE.totalBTC],
+    ['Costo Promedio (U$S)', lastPlanE.avgPrice],
+    ['Total Invertido (U$S)', lastPlanE.totalInvested],
+    ['Valor Actual (U$S)', lastPlanE.currentValue],
+    ['ROI (%)', lastPlanE.roi],
+  ];
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(summary), 'Resumen');
+
+  const cycleRows = [['#', 'Fecha Venta', 'Precio Venta', 'BTC Vendido', 'U$S Obtenido', '% Sobre Costo', 'Estado', 'Detalle']];
+  (lastPlanE.cycles || []).forEach(c => {
+    cycleRows.push([c.id, c.fecha, c.precioVenta, c.btcVendido, c.usdObtenido, c.pctSobreCosto, c.estado, c.detalle]);
+  });
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(cycleRows), 'Ciclos de Cosecha');
+
+  XLSX.writeFile(wb, 'MatheyBTC_PlanE.xlsx');
+}
 </script>
 </body>
 </html>
