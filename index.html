@@ -1322,6 +1322,135 @@ a { color: var(--orange); }
   </div>
 </div>
 
+<!-- ==================== PLAN E ==================== -->
+<div id="tab-planE" class="tab-content">
+  <div class="card">
+    <h3 data-i18n="e-params-title">⚙️ Parámetros DCA Cosecha</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label data-i18n="a-amount-label">Monto por Compra (U$S)</label>
+        <input type="number" id="e-amount" value="100" min="1">
+      </div>
+      <div class="form-group">
+        <label data-i18n="a-freq-label">Frecuencia</label>
+        <select id="e-freq">
+          <option value="1" data-i18n="freq-diaria">Diaria</option>
+          <option value="7" data-i18n="freq-semanal">Semanal</option>
+          <option value="14" data-i18n="freq-bisemanal">Bisemanal</option>
+          <option value="30" selected data-i18n="freq-mensual">Mensual</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label data-i18n="a-start-label">Fecha Inicio</label>
+        <input type="date" id="e-start" value="2020-01-01">
+      </div>
+      <div class="form-group">
+        <label data-i18n="a-end-label">Fecha Fin</label>
+        <input type="date" id="e-end">
+      </div>
+      <div class="form-group">
+        <label data-i18n="e-umbral-venta-label">Vender Cuando Precio Sube X% Sobre Mi Costo Promedio</label>
+        <input type="number" id="e-umbral-venta" value="50" min="1" max="500">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">
+          <button onclick="document.getElementById('e-umbral-venta').value=25" style="background:#ef4444;color:#fff;padding:4px 10px;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">25%</button>
+          <button onclick="document.getElementById('e-umbral-venta').value=50" style="background:#f97316;color:#fff;padding:4px 10px;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">50%</button>
+          <button onclick="document.getElementById('e-umbral-venta').value=75" style="background:#facc15;color:#000;padding:4px 10px;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">75%</button>
+          <button onclick="document.getElementById('e-umbral-venta').value=100" style="background:#4ade80;color:#000;padding:4px 10px;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">100%</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label data-i18n="e-pct-venta-label">Vender % del Stack</label>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          <button onclick="document.getElementById('e-pct-venta').value=5" style="background:#4ade80;color:#000;padding:4px 10px;border:none;border-radius:4px;cursor:pointer;font-size:12px">5%</button>
+          <button onclick="document.getElementById('e-pct-venta').value=10" style="background:#facc15;color:#000;padding:4px 10px;border:none;border-radius:4px;cursor:pointer;font-size:12px">10%</button>
+          <button onclick="document.getElementById('e-pct-venta').value=15" style="background:#ef4444;color:#fff;padding:4px 10px;border:none;border-radius:4px;cursor:pointer;font-size:12px">15%</button>
+          <input type="number" id="e-pct-venta" value="10" min="1" max="100" style="width:65px">
+        </div>
+      </div>
+      <div class="form-group">
+        <label data-i18n="e-umbral-recompra-label">Recomprar Cuando Precio Baja X% Desde Precio de Venta</label>
+        <input type="number" id="e-umbral-recompra" value="20" min="1" max="100">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">
+          <button onclick="document.getElementById('e-umbral-recompra').value=5" style="background:#ef4444;color:#fff;padding:4px 10px;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">5%</button>
+          <button onclick="document.getElementById('e-umbral-recompra').value=10" style="background:#f97316;color:#fff;padding:4px 10px;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">10%</button>
+          <button onclick="document.getElementById('e-umbral-recompra').value=15" style="background:#facc15;color:#000;padding:4px 10px;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">15%</button>
+          <button onclick="document.getElementById('e-umbral-recompra').value=25" style="background:#4ade80;color:#000;padding:4px 10px;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">25%</button>
+        </div>
+      </div>
+      <div class="form-group" style="justify-content:flex-end">
+        <button class="btn" onclick="runPlanE()" data-i18n="calcular">Calcular</button>
+      </div>
+      <div class="form-group" style="justify-content:flex-end">
+        <button class="btn-outline" onclick="exportPlanE()">📥 Excel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="e-results" style="display:none">
+    <div class="grid-4 mb-16">
+      <div class="stat-box">
+        <div class="label" data-i18n="e-btc-label">BTC Final</div>
+        <div class="value" id="e-btc">—</div>
+        <div class="sub" id="e-harvests">— cosecha(s)</div>
+      </div>
+      <div class="stat-box">
+        <div class="label" data-i18n="a-avgprice-label">Precio Promedio Compra</div>
+        <div class="value" id="e-avgprice">—</div>
+        <div class="sub">U$S/BTC</div>
+      </div>
+      <div class="stat-box">
+        <div class="label" data-i18n="a-invested-label">Total Invertido</div>
+        <div class="value" id="e-invested">—</div>
+        <div class="sub">U$S Bruto DCA</div>
+      </div>
+      <div class="stat-box green">
+        <div class="label" data-i18n="a-value-label">Valor Actual</div>
+        <div class="value" id="e-value">—</div>
+        <div class="sub" id="e-roi">ROI: —</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 data-i18n="e-vs-title">📊 Plan A) vs Plan E) — Comparativa</h3>
+      <div class="grid-3 mb-16">
+        <div class="stat-box" style="border-color:#4a9eff;background:rgba(74,158,255,0.07)">
+          <div class="label" style="color:#4a9eff;font-size:13px;font-weight:600" data-i18n="tab-a">Plan A) DCA Fijo</div>
+          <div class="value" id="e-vs-a-btc">—</div>
+          <div class="sub" data-i18n="b-btc-acum">BTC (Acumulado)</div>
+        </div>
+        <div class="stat-box" style="border-color:#f7931a;background:rgba(247,147,26,0.07)">
+          <div class="label" style="color:#f7931a;font-size:13px;font-weight:600" data-i18n="tab-e">Plan E) DCA Cosecha</div>
+          <div class="value" id="e-vs-e-btc">—</div>
+          <div class="sub" data-i18n="b-btc-acum">BTC (Acumulado)</div>
+        </div>
+        <div class="stat-box green">
+          <div class="label" data-i18n="b-diferencia">Diferencia</div>
+          <div class="value" id="e-vs-diff">—</div>
+          <div class="sub" id="e-vs-winner">—</div>
+        </div>
+      </div>
+      <div class="chart-wrap"><canvas id="chartE"></canvas></div>
+    </div>
+
+    <div class="card">
+      <h3 data-i18n="e-ciclos-title">🌾 Ciclos de Cosecha</h3>
+      <table class="tbl">
+        <thead><tr>
+          <th>#</th>
+          <th data-i18n="th-fecha">Fecha Venta</th>
+          <th class="num" data-i18n="th-precio-btc">Precio Venta</th>
+          <th class="num" data-i18n="th-btc-vendido">BTC Vendido</th>
+          <th class="num" data-i18n="th-usd-obtenido">U$S Obtenido</th>
+          <th class="num" data-i18n="e-th-pct-costo">% Sobre Costo</th>
+          <th data-i18n="e-th-estado">Estado</th>
+          <th data-i18n="e-th-detalle">Detalle</th>
+        </tr></thead>
+        <tbody id="e-cycles-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 <!-- ==================== DASHBOARD ==================== -->
 <div id="tab-dashboard" class="tab-content">
   <div class="card">
@@ -1564,6 +1693,18 @@ const TEXTS = {
     'd-equity-title': '📈 Curva de Equity',
     'd-historial-senales-title': '📋 Historial de Señales',
     'd-pnl-acum': 'P&L Acum.',
+    // Plan E
+    'tab-e': 'Plan E) DCA Cosecha',
+    'e-params-title': '⚙️ Parámetros DCA Cosecha',
+    'e-umbral-venta-label': 'Vender Cuando Precio Sube X% Sobre Mi Costo Promedio',
+    'e-pct-venta-label': 'Vender % del Stack',
+    'e-umbral-recompra-label': 'Recomprar Cuando Precio Baja X% Desde Precio de Venta',
+    'e-btc-label': 'BTC Final',
+    'e-vs-title': '📊 Plan A) vs Plan E) — Comparativa',
+    'e-ciclos-title': '🌾 Ciclos de Cosecha',
+    'e-th-pct-costo': '% Sobre Costo',
+    'e-th-estado': 'Estado',
+    'e-th-detalle': 'Detalle',
     // Dashboard
     'dash-calc-title': '🎯 Calculadora de Independencia Financiera',
     'dash-btc-hoy-label': 'BTC que Tenés Hoy',
@@ -1707,6 +1848,18 @@ const TEXTS = {
     'd-equity-title': '📈 Equity Curve',
     'd-historial-senales-title': '📋 Signal History',
     'd-pnl-acum': 'Cumul. P&L',
+    // Plan E
+    'tab-e': 'Plan E) DCA Harvest',
+    'e-params-title': '⚙️ DCA Harvest Parameters',
+    'e-umbral-venta-label': 'Sell When Price Rises X% Above My Cost Average',
+    'e-pct-venta-label': 'Sell % of Stack',
+    'e-umbral-recompra-label': 'Rebuy When Price Drops X% From Sale Price',
+    'e-btc-label': 'Final BTC',
+    'e-vs-title': '📊 Plan A) vs Plan E) — Comparison',
+    'e-ciclos-title': '🌾 Harvest Cycles',
+    'e-th-pct-costo': '% Above Cost',
+    'e-th-estado': 'Status',
+    'e-th-detalle': 'Detail',
     // Dashboard
     'dash-calc-title': '🎯 Financial Independence Calculator',
     'dash-btc-hoy-label': 'BTC you have today',
@@ -1764,6 +1917,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('a-end').value = today;
   document.getElementById('b-end').value = today;
+  document.getElementById('e-end').value = today;
   document.getElementById('d-date').value = today;
   const endVal = document.getElementById('a-end').value;
   const dStart = new Date(endVal);
