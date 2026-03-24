@@ -256,7 +256,7 @@ a { color: var(--orange); }
   <div class="header">
     <div>
       <h1>₿ MatheyBTC) invest-DCA</h1>
-      <div style="font-size:12px;color:var(--text2);margin-top:2px;">Plan A) · Plan B) · Plan C) · Plan D)</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:2px;">Plan A) - Plan B) - Plan C) - Plan D) - Plan E)</div>
     </div>
     <div style="display:flex;align-items:center;gap:16px;">
       <div id="lang-toggle" style="display:flex;gap:4px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:3px;">
@@ -284,18 +284,18 @@ a { color: var(--orange); }
       <div style="font-size:11px;color:var(--text2);" id="ref-price-date-bar">—</div>
     </div>
     <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 16px;min-width:140px;">
-      <div style="font-size:11px;color:var(--text2);margin-bottom:2px;">Precio Hoy</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:2px;">Precio Ahora (HOY)</div>
       <div style="font-size:15px;font-weight:700;color:var(--orange);" id="current-price-bar">—</div>
     </div>
   </div>
 
   <!-- TABS -->
   <div class="tabs">
-    <div class="tab active" onclick="showTab('planA')" data-i18n="tab-a">Plan A) DCA Fijo</div>
-    <div class="tab" onclick="showTab('planB')" data-i18n="tab-b">Plan B) DCA Re-compra</div>
-    <div class="tab" onclick="showTab('planC')" data-i18n="tab-c">Plan C) Colateral</div>
-    <div class="tab" onclick="showTab('planD')" data-i18n="tab-d">Plan D) Trading</div>
-    <div class="tab" onclick="showTab('planE')" data-i18n="tab-e">Plan E) DCA Cosecha</div>
+    <div class="tab active" onclick="showTab('planA')" data-i18n="tab-a">Plan A) DCA-fijo</div>
+    <div class="tab" onclick="showTab('planB')" data-i18n="tab-b">Plan B) DCA-re-compra</div>
+    <div class="tab" onclick="showTab('planC')" data-i18n="tab-c">Plan C) Colateral-BTC</div>
+    <div class="tab" onclick="showTab('planD')" data-i18n="tab-d">Plan D) Trading-BTC</div>
+    <div class="tab" onclick="showTab('planE')" data-i18n="tab-e">Plan E) DCA-Cosecha</div>
     <div class="tab" onclick="showTab('dashboard')" data-i18n="tab-dash">📊 Dashboard</div>
   </div>
 </div>
@@ -311,12 +311,13 @@ a { color: var(--orange); }
       </div>
       <div class="form-group">
         <label data-i18n="a-freq-label">Frecuencia</label>
-        <select id="a-freq">
-          <option value="1" data-i18n="freq-diaria">Diaria</option>
-          <option value="7" selected data-i18n="freq-semanal">Semanal</option>
-          <option value="14" data-i18n="freq-bisemanal">Bisemanal</option>
-          <option value="30" data-i18n="freq-mensual">Mensual</option>
-        </select>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">
+          <button onclick="setFreq('a-freq',1,this)" style="background:#4ade80;color:#000;padding:4px 12px;border:2px solid transparent;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Diario</button>
+          <button onclick="setFreq('a-freq',7,this)" style="background:#facc15;color:#000;padding:4px 12px;border:2px solid #fff;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Semanal</button>
+          <button onclick="setFreq('a-freq',14,this)" style="background:#f97316;color:#fff;padding:4px 12px;border:2px solid transparent;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Bisemanal</button>
+          <button onclick="setFreq('a-freq',30,this)" style="background:#ef4444;color:#fff;padding:4px 12px;border:2px solid transparent;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Mensual</button>
+        </div>
+        <input type="hidden" id="a-freq" value="7">
       </div>
       <div class="form-group">
         <label data-i18n="a-start-label">Fecha Inicio</label>
@@ -326,10 +327,8 @@ a { color: var(--orange); }
         <label data-i18n="a-end-label">Fecha Fin</label>
         <input type="date" id="a-end">
       </div>
-      <div class="form-group" style="justify-content:flex-end">
+      <div class="form-group" style="justify-content:flex-end;gap:8px">
         <button class="btn" onclick="runPlanA()" data-i18n="calcular">Calcular</button>
-      </div>
-      <div class="form-group" style="justify-content:flex-end">
         <button class="btn-outline" onclick="exportPlanA()">📥 Excel</button>
       </div>
     </div>
@@ -425,12 +424,13 @@ a { color: var(--orange); }
       </div>
       <div class="form-group">
         <label data-i18n="a-freq-label">Frecuencia</label>
-        <select id="b-freq">
-          <option value="1" data-i18n="freq-diaria">Diaria</option>
-          <option value="7" selected data-i18n="freq-semanal">Semanal</option>
-          <option value="14" data-i18n="freq-bisemanal">Bisemanal</option>
-          <option value="30" data-i18n="freq-mensual">Mensual</option>
-        </select>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">
+          <button onclick="setFreq('b-freq',1,this)" style="background:#4ade80;color:#000;padding:4px 12px;border:2px solid transparent;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Diario</button>
+          <button onclick="setFreq('b-freq',7,this)" style="background:#facc15;color:#000;padding:4px 12px;border:2px solid #fff;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Semanal</button>
+          <button onclick="setFreq('b-freq',14,this)" style="background:#f97316;color:#fff;padding:4px 12px;border:2px solid transparent;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Bisemanal</button>
+          <button onclick="setFreq('b-freq',30,this)" style="background:#ef4444;color:#fff;padding:4px 12px;border:2px solid transparent;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Mensual</button>
+        </div>
+        <input type="hidden" id="b-freq" value="7">
       </div>
       <div class="form-group">
         <label data-i18n="a-start-label">Fecha Inicio</label>
@@ -467,10 +467,8 @@ a { color: var(--orange); }
           </div>
         </div>
       </div>
-      <div class="form-group" style="justify-content:flex-end">
+      <div class="form-group" style="justify-content:flex-end;gap:8px">
         <button class="btn" onclick="runPlanB()" data-i18n="calcular">Calcular</button>
-      </div>
-      <div class="form-group" style="justify-content:flex-end">
         <button class="btn-outline" onclick="exportPlanB()">📥 Excel</button>
       </div>
     </div>
@@ -504,12 +502,12 @@ a { color: var(--orange); }
       <h3 data-i18n="b-vs-title">📊 Plan A) vs Plan B) — Comparativa</h3>
       <div class="grid-3 mb-16">
         <div class="stat-box" style="border-color:#4a9eff;background:rgba(74,158,255,0.07)">
-          <div class="label" style="color:#4a9eff;font-size:13px;font-weight:600" data-i18n="tab-a">Plan A) DCA Fijo</div>
+          <div class="label" style="color:#4a9eff;font-size:13px;font-weight:600" data-i18n="tab-a">Plan A) DCA-fijo</div>
           <div class="value" id="b-vs-a-btc">—</div>
           <div class="sub" data-i18n="b-btc-acum">BTC Acumulado</div>
         </div>
         <div class="stat-box" style="border-color:#f7931a;background:rgba(247,147,26,0.07)">
-          <div class="label" style="color:#f7931a;font-size:13px;font-weight:600" data-i18n="b-recompra-label">Plan B) DCA Re-compra</div>
+          <div class="label" style="color:#f7931a;font-size:13px;font-weight:600" data-i18n="b-recompra-label">Plan B) DCA-re-compra</div>
           <div class="value" id="b-vs-b-btc">—</div>
           <div class="sub" data-i18n="b-btc-acum">BTC Acumulado</div>
         </div>
@@ -1243,10 +1241,8 @@ a { color: var(--orange); }
         <label>T3 Period</label>
         <input type="number" id="d-bt-t3" value="7" min="1">
       </div>
-      <div class="form-group" style="justify-content:flex-end">
+      <div class="form-group" style="justify-content:flex-end;gap:8px">
         <button class="btn" onclick="runBacktest()" data-i18n="d-calcular-backtest">▶ Calcular Backtesting</button>
-      </div>
-      <div class="form-group" style="justify-content:flex-end">
         <button class="btn-outline" onclick="exportBacktest()">📥 Excel</button>
       </div>
     </div>
@@ -1414,12 +1410,13 @@ a { color: var(--orange); }
       </div>
       <div class="form-group">
         <label data-i18n="a-freq-label">Frecuencia</label>
-        <select id="e-freq">
-          <option value="1" data-i18n="freq-diaria">Diaria</option>
-          <option value="7" data-i18n="freq-semanal">Semanal</option>
-          <option value="14" data-i18n="freq-bisemanal">Bisemanal</option>
-          <option value="30" selected data-i18n="freq-mensual">Mensual</option>
-        </select>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">
+          <button onclick="setFreq('e-freq',1,this)" style="background:#4ade80;color:#000;padding:4px 12px;border:2px solid transparent;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Diario</button>
+          <button onclick="setFreq('e-freq',7,this)" style="background:#facc15;color:#000;padding:4px 12px;border:2px solid transparent;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Semanal</button>
+          <button onclick="setFreq('e-freq',14,this)" style="background:#f97316;color:#fff;padding:4px 12px;border:2px solid transparent;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Bisemanal</button>
+          <button onclick="setFreq('e-freq',30,this)" style="background:#ef4444;color:#fff;padding:4px 12px;border:2px solid #fff;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">Mensual</button>
+        </div>
+        <input type="hidden" id="e-freq" value="30">
       </div>
       <div class="form-group">
         <label data-i18n="a-start-label">Fecha Inicio</label>
@@ -1458,10 +1455,8 @@ a { color: var(--orange); }
           <button onclick="document.getElementById('e-umbral-recompra').value=25" style="background:#4ade80;color:#000;padding:4px 10px;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:700;">25%</button>
         </div>
       </div>
-      <div class="form-group" style="justify-content:flex-end">
+      <div class="form-group" style="justify-content:flex-end;gap:8px">
         <button class="btn" onclick="runPlanE()" data-i18n="calcular">Calcular</button>
-      </div>
-      <div class="form-group" style="justify-content:flex-end">
         <button class="btn-outline" onclick="exportPlanE()">📥 Excel</button>
       </div>
     </div>
@@ -1495,12 +1490,12 @@ a { color: var(--orange); }
       <h3 data-i18n="e-vs-title">📊 Plan A) vs Plan E) — Comparativa</h3>
       <div class="grid-3 mb-16">
         <div class="stat-box" style="border-color:#4a9eff;background:rgba(74,158,255,0.07)">
-          <div class="label" style="color:#4a9eff;font-size:13px;font-weight:600" data-i18n="tab-a">Plan A) DCA Fijo</div>
+          <div class="label" style="color:#4a9eff;font-size:13px;font-weight:600" data-i18n="tab-a">Plan A) DCA-fijo</div>
           <div class="value" id="e-vs-a-btc">—</div>
           <div class="sub" data-i18n="b-btc-acum">BTC (Acumulado)</div>
         </div>
         <div class="stat-box" style="border-color:#f7931a;background:rgba(247,147,26,0.07)">
-          <div class="label" style="color:#f7931a;font-size:13px;font-weight:600" data-i18n="tab-e">Plan E) DCA Cosecha</div>
+          <div class="label" style="color:#f7931a;font-size:13px;font-weight:600" data-i18n="tab-e">Plan E) DCA-Cosecha</div>
           <div class="value" id="e-vs-e-btc">—</div>
           <div class="sub" data-i18n="b-btc-acum">BTC (Acumulado)</div>
         </div>
@@ -1631,7 +1626,7 @@ function loadEmbeddedPrices() {
   status.className = 'data-badge ok';
   status.textContent = '✓ ' + priceHistory.length + ' días (embebido)';
   document.getElementById('dataRange').textContent =
-    priceHistory[0].date + ' → ' + priceHistory[priceHistory.length - 1].date;
+    'Desde ' + priceHistory[0].date + ' hasta ' + priceHistory[priceHistory.length - 1].date;
 }
 
 // ============================================================
@@ -1653,10 +1648,10 @@ let signals = JSON.parse(localStorage.getItem('matheybtc_signals') || '[]');
 const TEXTS = {
   es: {
     // Nav / tabs
-    'tab-a': 'Plan A) DCA Fijo',
-    'tab-b': 'Plan B) DCA Re-compra',
-    'tab-c': 'Plan C) Colateral',
-    'tab-d': 'Plan D) Trading',
+    'tab-a': 'Plan A) DCA-fijo',
+    'tab-b': 'Plan B) DCA-re-compra',
+    'tab-c': 'Plan C) Colateral-BTC',
+    'tab-d': 'Plan D) Trading-BTC',
     'tab-dash': '📊 Dashboard',
     'sin-datos': 'Sin datos',
     'precios-btc': 'Precios BTC:',
@@ -1707,7 +1702,7 @@ const TEXTS = {
     'b-sellpct-label': 'Vender % del Stack al Trigger',
     'b-btc-label': 'BTC Final',
     'b-btc-acum': 'BTC (Acumulado)',
-    'b-recompra-label': 'Plan B) DCA Re-compra',
+    'b-recompra-label': 'Plan B) DCA-re-compra',
     'b-vs-title': '📊 Plan A) vs Plan B) — Comparativa',
     'b-diferencia': 'Diferencia',
     'b-dca-activos': '📂 DCA Activos',
@@ -1784,7 +1779,7 @@ const TEXTS = {
     'd-ev-table-title': '📊 Esperanza por Año — Últimos 5 Años',
     'th-anio': 'Año',
     // Plan E
-    'tab-e': 'Plan E) DCA Cosecha',
+    'tab-e': 'Plan E) DCA-Cosecha',
     'e-params-title': '⚙️ Parámetros DCA Cosecha',
     'e-umbral-venta-label': 'Vender Cuando Precio Sube X% Sobre Mi Costo Promedio',
     'e-pct-venta-label': 'Vender % del Stack',
@@ -1817,10 +1812,10 @@ const TEXTS = {
   },
   en: {
     // Nav / tabs
-    'tab-a': 'Plan A) Fixed DCA',
-    'tab-b': 'Plan B) DCA Re-buy',
-    'tab-c': 'Plan C) Collateral',
-    'tab-d': 'Plan D) Trading',
+    'tab-a': 'Plan A) DCA-fijo',
+    'tab-b': 'Plan B) DCA-re-compra',
+    'tab-c': 'Plan C) Colateral-BTC',
+    'tab-d': 'Plan D) Trading-BTC',
     'tab-dash': '📊 Dashboard',
     'sin-datos': 'No data',
     'precios-btc': 'BTC Prices:',
@@ -1871,7 +1866,7 @@ const TEXTS = {
     'b-sellpct-label': 'Sell % of Stack at Trigger',
     'b-btc-label': 'Final BTC',
     'b-btc-acum': 'BTC (Accumulated)',
-    'b-recompra-label': 'Plan B) DCA Re-buy',
+    'b-recompra-label': 'Plan B) DCA-re-compra',
     'b-vs-title': '📊 Plan A) vs Plan B) — Comparison',
     'b-diferencia': 'Difference',
     'b-dca-activos': '📂 Active DCAs',
@@ -1948,7 +1943,7 @@ const TEXTS = {
     'd-ev-table-title': '📊 EV by Year — Last 5 Years',
     'th-anio': 'Year',
     // Plan E
-    'tab-e': 'Plan E) DCA Harvest',
+    'tab-e': 'Plan E) DCA-Cosecha',
     'e-params-title': '⚙️ DCA Harvest Parameters',
     'e-umbral-venta-label': 'Sell When Price Rises X% Above My Cost Average',
     'e-pct-venta-label': 'Sell % of Stack',
@@ -2031,6 +2026,18 @@ document.addEventListener('DOMContentLoaded', () => {
   // Init Plan C sliders
   updateEffectiveRate();
   highlightCLTVBtn(50);
+  // Fetch live BTC price from CoinGecko
+  fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd')
+    .then(r => r.json())
+    .then(data => {
+      const live = data?.bitcoin?.usd;
+      if (live) {
+        currentPrice = live;
+        const el = document.getElementById('current-price-bar');
+        if (el) el.textContent = '$' + fmt(live, 0);
+      }
+    })
+    .catch(() => {});
 });
 
 // ============================================================
@@ -2063,7 +2070,7 @@ async function loadPricesLocal() {
     status.className = 'data-badge ok';
     status.textContent = '✓ ' + priceHistory.length + ' días cargados (local)';
     document.getElementById('dataRange').textContent =
-      priceHistory[0].date + ' → ' + priceHistory[priceHistory.length - 1].date;
+      'Desde ' + priceHistory[0].date + ' hasta ' + priceHistory[priceHistory.length - 1].date;
   } catch(e) {
     status.className = 'data-badge err';
     status.textContent = '✗ ' + e.message;
@@ -2110,7 +2117,7 @@ async function loadPrices() {
     status.className = 'data-badge ok';
     status.textContent = '✓ ' + priceHistory.length + ' días cargados';
     document.getElementById('dataRange').textContent =
-      priceHistory[0].date + ' → ' + priceHistory[priceHistory.length - 1].date;
+      'Desde ' + priceHistory[0].date + ' hasta ' + priceHistory[priceHistory.length - 1].date;
   } catch (e) {
     status.className = 'data-badge err';
     status.textContent = '✗ Error: ' + e.message;
@@ -2570,6 +2577,12 @@ function renderBacktest(amount, freqDays, endDate) {
 // ============================================================
 //  PLAN B — DCA RECOMPRA
 // ============================================================
+function setFreq(id, val, btn) {
+  document.getElementById(id).value = val;
+  const parent = btn.parentElement;
+  parent.querySelectorAll('button').forEach(b => b.style.border = '2px solid transparent');
+  btn.style.border = '2px solid #fff';
+}
 function setSellPct(v) { document.getElementById('b-sellpct').value = v; }
 function setTrigger(pct) {
   document.getElementById('b-trigger').value = pct;
@@ -2711,9 +2724,9 @@ function runPlanB() {
     data: {
       labels: filtered.map(e => e.date),
       datasets: [
-        { label: 'Plan B) DCA Re-compra', data: filtered.map(e => e.value),
+        { label: 'Plan B) DCA-re-compra', data: filtered.map(e => e.value),
           borderColor: '#f7931a', pointRadius: 0, tension: 0.3, fill: false },
-        { label: 'Plan A) DCA Fijo', data: filtered.map(e => planAMap[e.date] || null),
+        { label: 'Plan A) DCA-fijo', data: filtered.map(e => planAMap[e.date] || null),
           borderColor: '#4a9eff', pointRadius: 0, tension: 0.3, fill: false, spanGaps: true }
       ]
     },
@@ -3867,11 +3880,11 @@ function runDashboard() {
   const tbody = document.getElementById('dash-plans-body');
   tbody.innerHTML = '';
   const plans = [
-    { name: 'Plan A) DCA Fijo', data: lastPlanA },
-    { name: 'Plan B) DCA Re-compra', data: lastPlanB },
-    { name: 'Plan C) Colateral', data: lastPlanC ? { totalBTC: lastPlanC.btcTotal, totalInvested: lastPlanC.priceInput * lastPlanC.btcAmount, avgPrice: lastPlanC.priceInput / lastPlanC.btcTotal, currentValue: lastPlanC.btcTotal * price, roi: ((lastPlanC.btcTotal * price - lastPlanC.priceInput * lastPlanC.btcAmount) / (lastPlanC.priceInput * lastPlanC.btcAmount)) * 100 } : null },
-    { name: 'Plan D) Trading', data: lastPlanD ? { totalBTC: lastPlanD.currentBTC, totalInvested: lastPlanD.netInvested, avgPrice: lastPlanD.netInvested / lastPlanD.currentBTC, currentValue: lastPlanD.currentVal, roi: lastPlanD.pnlPct } : null },
-    { name: 'Plan E) DCA Cosecha', data: lastPlanE },
+    { name: 'Plan A) DCA-fijo', data: lastPlanA },
+    { name: 'Plan B) DCA-re-compra', data: lastPlanB },
+    { name: 'Plan C) Colateral-BTC', data: lastPlanC ? { totalBTC: lastPlanC.btcTotal, totalInvested: lastPlanC.priceInput * lastPlanC.btcAmount, avgPrice: lastPlanC.priceInput / lastPlanC.btcTotal, currentValue: lastPlanC.btcTotal * price, roi: ((lastPlanC.btcTotal * price - lastPlanC.priceInput * lastPlanC.btcAmount) / (lastPlanC.priceInput * lastPlanC.btcAmount)) * 100 } : null },
+    { name: 'Plan D) Trading-BTC', data: lastPlanD ? { totalBTC: lastPlanD.currentBTC, totalInvested: lastPlanD.netInvested, avgPrice: lastPlanD.netInvested / lastPlanD.currentBTC, currentValue: lastPlanD.currentVal, roi: lastPlanD.pnlPct } : null },
+    { name: 'Plan E) DCA-Cosecha', data: lastPlanE },
   ];
   plans.forEach((plan, i) => {
     const d = plan.data;
@@ -4211,9 +4224,9 @@ function runPlanE() {
     data: {
       labels: filtered.map(e => e.date),
       datasets: [
-        { label: 'Plan E) DCA Cosecha', data: filtered.map(e => e.value),
+        { label: 'Plan E) DCA-Cosecha', data: filtered.map(e => e.value),
           borderColor: '#f7931a', pointRadius: 0, tension: 0.3, fill: false, spanGaps: true },
-        { label: 'Plan A) DCA Fijo', data: filtered.map(e => planAMap[e.date] || null),
+        { label: 'Plan A) DCA-fijo', data: filtered.map(e => planAMap[e.date] || null),
           borderColor: '#4a9eff', pointRadius: 0, tension: 0.3, fill: false, spanGaps: true },
       ]
     },
@@ -4257,7 +4270,7 @@ function exportPlanE() {
   const wb = XLSX.utils.book_new();
 
   const summary = [
-    ['Plan E) DCA Cosecha — Resumen'],
+    ['Plan E) DCA-Cosecha — Resumen'],
     ['BTC Final', lastPlanE.totalBTC],
     ['Costo Promedio (U$S)', lastPlanE.avgPrice],
     ['Total Invertido (U$S)', lastPlanE.totalInvested],
