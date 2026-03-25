@@ -938,18 +938,6 @@ a { color: var(--orange); }
         </div>
       </div>
 
-      <!-- Beneficio Esperado | Beneficio en BTC -->
-      <div class="loop-grid" style="margin-bottom:12px;">
-        <div class="stat-box green">
-          <div class="label">Beneficio Esperado</div>
-          <div class="value" id="c-loop-benefit-usd">—</div>
-        </div>
-        <div class="stat-box green">
-          <div class="label">Beneficio en BTC</div>
-          <div class="value" id="c-loop-benefit-btc">—</div>
-        </div>
-      </div>
-
       <!-- Rendimiento | BTC Total Final -->
       <div class="loop-grid">
         <div class="stat-box">
@@ -1041,7 +1029,7 @@ a { color: var(--orange); }
       <div style="margin-bottom:16px;">
         <div class="c-param-label">LTV Objetivo: <span id="c-topup-ltv-target-display" style="color:var(--orange);font-weight:700;">50%</span></div>
         <input type="range" id="c-topup-ltv-target" min="10" max="80" step="1" value="50"
-          style="width:100%;margin-top:6px;"
+          style="width:100%;margin-top:6px;accent-color:var(--naranja);"
           oninput="document.getElementById('c-topup-ltv-target-display').textContent=this.value+'%'; updateTopUp();">
       </div>
       <div class="grid-3">
@@ -3291,7 +3279,9 @@ function updateLoopSimSection() {
 // ============================================================
 function updateTopUp() {
   if (!lastPlanC) return;
-  const { loan, repay, priceInput, btcAmount } = lastPlanC;
+  const { loan, repay, btcAmount } = lastPlanC;
+  const priceField = document.getElementById('c-price');
+  const priceInput = (priceField && parseFloat(priceField.value) > 0) ? parseFloat(priceField.value) : lastPlanC.priceInput;
   const sliderEl = document.getElementById('c-topup-ltv-target');
   const ltvObjetivoPct = sliderEl ? parseFloat(sliderEl.value) : 50;
   const ltvObjetivo = ltvObjetivoPct / 100;
