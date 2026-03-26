@@ -2418,9 +2418,6 @@ function renderChartA(equity) {
 function renderFreqComparison(startDate, endDate, amount) {
   const tbody = document.getElementById('a-freq-body');
   tbody.innerHTML = '';
-  // Base capital = what daily DCA would invest over the period
-  const dailyPurchases = calcDCA(startDate, endDate, amount, 1);
-  const totalCapital = amount * dailyPurchases.length;
   const freqs = [
     { days: 1,  color: 'rgba(0,200,122,0.13)',  border: '3px solid rgba(0,200,122,0.7)' },
     { days: 7,  color: 'rgba(255,215,0,0.08)',   border: '1px solid rgba(255,215,0,0.3)' },
@@ -2428,7 +2425,7 @@ function renderFreqComparison(startDate, endDate, amount) {
     { days: 30, color: 'rgba(255,68,68,0.08)',   border: '1px solid rgba(255,68,68,0.3)' },
   ];
   for (const { days, color, border } of freqs) {
-    const p = calcDCA(startDate, endDate, totalCapital / Math.max(1, calcDCA(startDate, endDate, 1, days).length), days);
+    const p = calcDCA(startDate, endDate, amount, days);
     if (!p.length) continue;
     const { totalBTC, totalInvested, avgPrice } = aggregateDCA(p);
     const val = totalBTC * currentPrice;
