@@ -12,6 +12,7 @@ T3_PERIOD = 7
 B = 0.618
 
 STATE_FILE = "signal_state.json"
+BINANCE_PRICE_URL = "https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT"
 
 def send_telegram(msg):
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
@@ -32,8 +33,23 @@ def save_state(state):
     with open(STATE_FILE, "w") as f:
         json.dump(state, f, indent=2)
 
+def get_current_btc_price() -> tuple[str, float] | None:
+    """Obtiene el precio actual de BTC desde Binance (API pública, sin key).
+    Retorna (fecha_hoy_utc, precio) o None si falla."""
+    try:
+        r = requests.get(BINANCE_PRICE_URL, timeout=10)
+        r.raise_for_status()
+        price = float(r.json()["price"])
+        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        return today, price
+    except Exception as e:
+        print(f"[WARN] No se pudo obtener precio de Binance: {e}")
+        return None
+
+
 def get_btc_prices():
-    """Descarga precios diarios de BTC desde Google Sheets"""
+    """Descarga precios diarios de BTC desde Google Sheets y agrega precio
+    actual de Binance si hoy no está en el dataset."""
     url = "https://docs.google.com/spreadsheets/d/1AUV0rvijcy7yW3H2IWwlAm2ENHXe6Hfc/export?format=csv&sheet=BTC%20price"
     r = requests.get(url, timeout=30)
     r.raise_for_status()
@@ -61,7 +77,19 @@ def get_btc_prices():
                 prices.append({"date": date_str, "price": price})
         except:
             continue
-    return sorted(prices, key=lambda x: x["date"])
+    prices = sorted(prices, key=lambda x: x["date"])
+
+    # Si hoy no está en el sheet, agregar precio actual de Binance
+    current = get_current_btc_price()
+    if current:
+        today, live_price = current
+        if not prices or prices[-1]["date"] < today:
+            prices.append({"date": today, "price": live_price})
+            print(f"[INFO] Precio de Binance agregado: ${live_price:,.2f} ({today})")
+        else:
+            print(f"[INFO] Sheet ya tiene precio de hoy ({today}), no se usa Binance")
+
+    return prices
 
 def calc_cci(prices, period):
     n = len(prices)
@@ -115,7 +143,7 @@ def main():
     prices = [d["price"] for d in data]
     dates = [d["date"] for d in data]
 
-    print(f"Calculando T3-CCI ({len(prices)} días)...")
+    print(f"Calculando T3-CCI ({len(prices)} días, último: {dates[-1]})...")
     xccir = calc_t3cci(prices, CCI_PERIOD, T3_PERIOD, B)
 
     # Últimos 2 valores para detectar cruce
